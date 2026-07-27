@@ -1,0 +1,1092 @@
+<title>Clause Certification — Legal Verification MVP</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #ffffff;
+    --surface: #ffffff;
+    --ink: #000000;
+    --muted: #555555;
+    --accent: #006400;
+    --accent-soft: #e9f2e9;
+    --diverge: #990000;
+    --diverge-soft: #f6eaea;
+    --hairline: #aaaaaa;
+    --code-bg: #f3f3f3;
+    --mid: #7a5c00;
+    --mid-soft: #f5efdb;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .prose {
+    max-width: 78ch;
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  header.hero {
+    padding: 2.5rem 0 2rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  header.hero h1 {
+    font-size: 2.1rem;
+    line-height: 1.2;
+    margin: 0.4rem 0 0.7rem;
+    font-weight: bold;
+  }
+
+  header.hero .standfirst {
+    font-size: 1.05rem;
+    max-width: 70ch;
+    margin: 0;
+  }
+
+  header.hero .thesis {
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+  }
+
+  h2 .no {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    margin: 0 0 0.9rem;
+  }
+
+  section.band {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  code,
+  .mono {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.88em;
+  }
+
+  code {
+    background: var(--code-bg);
+    padding: 0 0.25em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--hairline);
+    padding: 0.8rem 1rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin: 0.75rem 0;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  /* ---- steps ---- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .step .k {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .step p {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .step .fine {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* ---- case picker ---- */
+  .cases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.8rem;
+    margin: 1.25rem 0 1.75rem;
+  }
+
+  .case-card {
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+
+  .case-card:hover {
+    border-color: var(--ink);
+  }
+
+  .case-card.active {
+    outline: 2px solid var(--ink);
+    outline-offset: -1px;
+  }
+
+  .case-card .cc-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .case-card .cc-meta {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .chip {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.45rem;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+
+  .chip.domain {
+    color: var(--muted);
+    border-color: var(--hairline);
+    background: var(--code-bg);
+  }
+
+  .chip.unk {
+    color: var(--muted);
+    border-style: dashed;
+    background: none;
+  }
+
+  .chip.eq {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .chip.div {
+    color: var(--diverge);
+    border-color: var(--diverge);
+    background: var(--diverge-soft);
+  }
+
+  /* ---- workbench ---- */
+  .bench {
+    display: grid;
+    grid-template-columns: minmax(340px, 5fr) minmax(420px, 7fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  @media (max-width: 980px) {
+    .bench {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+  }
+
+  .panel-h {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .panel-b {
+    padding: 1rem 1.1rem;
+  }
+
+  /* document */
+  .doc {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    max-height: 560px;
+    overflow-y: auto;
+  }
+
+  .doc h4 {
+    font-size: 1.05rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .doc p {
+    margin: 0 0 0.7rem;
+  }
+
+  .doc p.sub {
+    margin-left: 1.4rem;
+  }
+
+  .doc p.flawed {
+    background: var(--diverge-soft);
+    border-left: 3px solid var(--diverge);
+    padding: 0.4rem 0.6rem;
+  }
+
+  .flaw-note {
+    font-size: 0.85rem;
+    color: var(--diverge);
+    background: var(--diverge-soft);
+    border: 1px solid var(--diverge);
+    padding: 0.5rem 0.7rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* diagrams */
+  .flows {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .flowbox .fb-h {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+
+  .flowbox .fb-h .src {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    font-size: 0.78rem;
+  }
+
+  .flow-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+  }
+
+  svg.flow text {
+    font-family: "Times New Roman", Times, serif;
+    fill: var(--ink);
+  }
+
+  svg.flow .nd rect {
+    fill: #ffffff;
+    stroke: #000000;
+    stroke-width: 1;
+  }
+
+  svg.flow .nd text {
+    font-size: 12px;
+  }
+
+  svg.flow .oc rect {
+    stroke-width: 1;
+  }
+
+  svg.flow .oc text {
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+
+  svg.flow .oc.good rect {
+    fill: var(--accent-soft);
+    stroke: var(--accent);
+  }
+
+  svg.flow .oc.good text {
+    fill: var(--accent);
+  }
+
+  svg.flow .oc.bad rect {
+    fill: var(--diverge-soft);
+    stroke: var(--diverge);
+  }
+
+  svg.flow .oc.bad text {
+    fill: var(--diverge);
+  }
+
+  svg.flow .oc.mid rect {
+    fill: var(--mid-soft);
+    stroke: var(--mid);
+  }
+
+  svg.flow .oc.mid text {
+    fill: var(--mid);
+  }
+
+  svg.flow .eg {
+    stroke: #666666;
+    stroke-width: 1;
+    fill: none;
+  }
+
+  svg.flow .eg-lbl {
+    font-size: 10px;
+    fill: #555555;
+    font-style: italic;
+  }
+
+  svg.flow .hl-a.eg,
+  svg.flow .hl-b.eg {
+    stroke-width: 2.6;
+  }
+
+  svg.flow .hl-a.eg {
+    stroke: var(--accent);
+  }
+
+  svg.flow .hl-b.eg {
+    stroke: var(--diverge);
+  }
+
+  svg.flow .nd.hl-a rect {
+    stroke: var(--accent);
+    stroke-width: 2.2;
+  }
+
+  svg.flow .nd.hl-b rect {
+    stroke: var(--diverge);
+    stroke-width: 2.2;
+  }
+
+  svg.flow .oc.hl-a rect,
+  svg.flow .oc.hl-b rect {
+    stroke-width: 2.4;
+  }
+
+  /* buttons — native browser appearance */
+  .btn {
+    font: inherit;
+    padding: 0.15rem 0.8rem;
+    cursor: pointer;
+  }
+
+  .btn:disabled {
+    cursor: default;
+  }
+
+  /* verdict */
+  .certify-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .progress {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .banner {
+    border: 1px solid;
+    padding: 0.7rem 1rem;
+    margin-top: 0.9rem;
+    display: none;
+  }
+
+  .banner.show {
+    display: block;
+  }
+
+  .banner.eq {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .banner.div {
+    background: var(--diverge-soft);
+    border-color: var(--diverge);
+    color: var(--diverge);
+  }
+
+  .banner .big {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .banner .sub {
+    font-size: 0.88rem;
+    margin-top: 0.15rem;
+  }
+
+  /* counterexample */
+  .cx-narr {
+    font-style: italic;
+    margin: 0.6rem 0 0.8rem;
+  }
+
+  .vs {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .vs>div {
+    flex: 1 1 200px;
+    border: 1px solid;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.88rem;
+  }
+
+  .vs .ref {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .vs .docx {
+    background: var(--diverge-soft);
+    border-color: var(--diverge);
+    color: var(--diverge);
+  }
+
+  .vs b {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .cx-list {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 0.7rem;
+  }
+
+  .cx-chip {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.78rem;
+    background: var(--code-bg);
+    border: 1px solid var(--hairline);
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    color: var(--ink);
+  }
+
+  .cx-chip:hover {
+    border-color: var(--diverge);
+  }
+
+  /* explorer */
+  .toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .tg {
+    font: inherit;
+    font-size: 0.85rem;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 0.15rem 0.6rem;
+    cursor: pointer;
+  }
+
+  .tg.on {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .validity {
+    font-size: 0.85rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .validity.ok {
+    color: var(--accent);
+  }
+
+  .validity.bad {
+    color: var(--mid);
+  }
+
+  .outcomes {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .lean-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.05rem 0.4rem;
+  }
+
+  footer {
+    padding: 2rem 0 3.5rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  footer .prose {
+    max-width: 82ch;
+  }
+
+  a {
+    color: #0000cc;
+  }
+
+  :focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Concord AI · Legal Document Verification MVP · Interactive Demo</div>
+    <h1>Certify a clause against the logic it was meant to implement.</h1>
+    <p class="standfirst">Below are six synthetic contract sections generated from two agreed decision
+      policies — some faithful, some carrying a single planted drafting flaw. Pick one, inspect the logic,
+      and run the certification: every legally possible scenario is checked, and any divergence is returned
+      as a concrete case where the contract and the policy disagree.</p>
+  </header>
+
+  <section class="band">
+    <h2><span class="no">How it works</span>Four offline stages, one auditable pipeline</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="k">1 · Reference logic</div>
+        <p>Each legal domain gets a <strong>fixed ontology</strong> — boolean predicates ("dismissed for cause?",
+          "5 years served?"), constraints ruling out impossible combinations, and named outcomes — plus a
+          <strong>decision flow</strong> over it. A flow is a total function: every scenario reaches exactly one
+          outcome.
+        </p>
+        <p class="fine">Severance: 9 atoms, 7 constraints → 42 legally possible worlds of 512. Claims: 5 atoms → 32
+          worlds.</p>
+      </div>
+      <div class="step">
+        <div class="k">2 · Clause generation (offline)</div>
+        <p>Contract prose is LLM-authored from the flow. <strong>Faithful</strong> cases render the reference logic
+          exactly. <strong>Divergent</strong> cases first mutate the flow — flip a branch, drop a carve-out, promote a
+          qualifier to a gate — then render the <em>mutated</em> logic faithfully. Divergence lives in the tree, never
+          in a model "making a mistake", so ground truth is exact by construction.</p>
+        <p class="fine">Divergent documents are reworded and renumbered against their faithful siblings: string
+          diffing finds nothing. One flaw per case.</p>
+      </div>
+      <div class="step">
+        <div class="k">3 · Extraction (offline)</div>
+        <p>The prose is read back and mapped onto the <strong>same ontology</strong>, producing an extracted flow —
+          the document's logic as the reader understood it. Because every case has recorded ground truth, extraction
+          accuracy is measured, not assumed.</p>
+        <p class="fine">Current library: 6 of 6 documents extracted semantically exactly.</p>
+      </div>
+      <div class="step">
+        <div class="k">4 · Certification (Lean)</div>
+        <p>Reference flow vs. extracted flow, over <strong>every valid world</strong>. Lean enumerates the
+          counterexamples and the kernel checks the classification — <code>counterexamples = []</code> or
+          <code>counterexamples.length = N</code> — by <code>decide</code>. No trust in our code required: the proof
+          object is machine-checked.
+        </p>
+        <p class="fine">This page re-runs the same exhaustive check live in your browser; the Lean theorem for each
+          case is shown alongside.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="demo">
+    <h2><span class="no">The workbench</span>Pick a document, then certify it</h2>
+    <div class="cases" id="casePicker"></div>
+
+    <div class="bench">
+      <div class="panel">
+        <div class="panel-h"><span>Contract text</span><span class="mono" id="docPath"></span></div>
+        <div class="panel-b">
+          <div id="flawNote"></div>
+          <div class="doc" id="docView"></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1.25rem">
+        <div class="panel">
+          <div class="panel-h"><span>Certification</span><span class="lean-badge" id="leanBadge"
+              style="display:none">Lean kernel-checked ✓</span></div>
+          <div class="panel-b">
+            <div class="certify-bar">
+              <button class="btn" id="certifyBtn">Run certification</button>
+              <span class="progress" id="progress"></span>
+            </div>
+            <div class="banner" id="verdictBanner">
+              <div class="big" id="verdictBig"></div>
+              <div class="sub" id="verdictSub"></div>
+            </div>
+            <div id="cxPanel" style="display:none">
+              <p class="cx-narr" id="cxNarr"></p>
+              <div class="vs">
+                <div class="ref"><b>Agreed policy</b><span id="cxRef"></span></div>
+                <div class="docx"><b>Drafted contract</b><span id="cxDoc"></span></div>
+              </div>
+              <div class="cx-list" id="cxList"></div>
+              <p style="font-family:system-ui,sans-serif;font-size:0.72rem;color:var(--muted);margin:0.5rem 0 0">
+                Click a scenario to load it into the explorer and trace both paths below.</p>
+            </div>
+            <div id="leanPanel" style="display:none">
+              <pre><code id="leanCode"></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-h"><span>Scenario explorer</span><span
+              style="font-weight:400;letter-spacing:0;text-transform:none">toggle the facts of a case</span></div>
+          <div class="panel-b">
+            <div class="toggles" id="toggles"></div>
+            <div class="validity" id="validity"></div>
+            <div class="outcomes">
+              <div class="vs" style="flex:1">
+                <div class="ref"><b>Agreed policy says</b><span id="outRef">—</span></div>
+                <div class="docx" id="outDocBox"><b>Drafted contract says</b><span id="outDoc">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flows">
+          <div class="flowbox">
+            <div class="fb-h"><span>Reference flow</span><span class="src mono" id="refSrc"></span></div>
+            <div class="flow-scroll" id="refFlowBox"></div>
+          </div>
+          <div class="flowbox">
+            <div class="fb-h"><span>Extracted flow (from the contract text)</span><span class="src mono"
+                id="extSrc"></span></div>
+            <div class="flow-scroll" id="extFlowBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="prose">
+      <strong>Scope of the guarantee.</strong> The certification proves that two logic flows — the agreed
+      reference and the flow extracted from the prose — agree or disagree on every legally possible scenario.
+      It does not prove that extraction read the document correctly; that step is measured against ground truth
+      (currently 6/6 exact) and stays auditable by a human. Open-textured terms ("material breach",
+      "suitable alternative") live inside the predicates, where interpretation remains a human judgment.
+      Proof artifacts: <span class="mono">lean/cases/*.lean</span>, Lean 4.32, core only, ~0.7&nbsp;s per case.
+    </div>
+  </footer>
+</div>
+
+<script>
+  const DATA = {"shortLabels": {"terminated_for_cause": "Cause?", "gross_misconduct": "Gross misconduct?", "voluntary_resignation": "Resigned?", "constructive_dismissal": "Constructive dismissal?", "served_12_months": "12 months served?", "served_5_years": "5 years served?", "redundancy": "Redundancy?", "suitable_alternative_offered": "Alt. role offered?", "written_notice_given": "Written notice?", "policy_in_force": "Policy in force?", "excluded_peril": "Excluded peril?", "loss_exceeds_deductible": "Above deductible?", "notice_within_30_days": "Notice ≤ 30 days?", "documentation_complete": "Docs complete?"}, "outcomes": {"NO_SEVERANCE": {"label": "No severance", "tone": "bad"}, "STATUTORY_MINIMUM": {"label": "Statutory minimum", "tone": "mid"}, "STANDARD_SEVERANCE": {"label": "Standard severance", "tone": "good"}, "ENHANCED_SEVERANCE": {"label": "Enhanced severance", "tone": "good"}, "PREMIUM_REDUNDANCY": {"label": "Premium redundancy", "tone": "good"}, "DENIED": {"label": "Denied", "tone": "bad"}, "BELOW_DEDUCTIBLE": {"label": "Below deductible", "tone": "mid"}, "FULL_PAYMENT": {"label": "Full payment", "tone": "good"}, "REDUCED_PAYMENT": {"label": "Reduced payment", "tone": "mid"}}, "cases": [{"id": "severance-faithful", "title": "Severance clause — draft A", "domainLabel": "Employment", "document": "examples/termination_severance/clause_faithful.md", "flowId": "termination-severance-v2", "text": "## 7. Severance\n\n**7.1 Entitlement.** Upon termination of the Employee's employment, the Employee\nshall be entitled to a severance payment determined in accordance with this\nSection 7, and this Section 7 sets out the Employee's sole and exclusive\nentitlement to severance.\n\n**7.2 Dismissal for Cause.** Where the employment is terminated by the Employer\nfor Cause:\n\n  (a) no severance payment shall be due where the Cause relied upon consists\n      of gross misconduct; and\n\n  (b) in any other case of dismissal for Cause, no severance payment shall be\n      due unless, as at the Termination Date, the Employee has completed five\n      (5) years of continuous service, in which case the Employee's\n      entitlement shall be limited to the minimum severance payment, if any,\n      required by applicable law.\n\n**7.3 Resignation.** No severance payment shall be due where the employment\nends by reason of the Employee's resignation; provided that a resignation by\nthe Employee in direct response to a fundamental breach of this Agreement by\nthe Employer (a \"**Constructive Dismissal**\") shall not be treated as a\nresignation for the purposes of this Section 7, and the Employee's entitlement\nshall instead be determined under Sections 7.4 to 7.6 as if the employment had\nbeen terminated by the Employer without Cause.\n\n**7.4 Qualifying service.** Where the Employee's entitlement falls to be\ndetermined under this Section 7.4 to 7.6 and, as at the Termination Date, the\nEmployee has not completed twelve (12) months of continuous service, the\nEmployee's entitlement shall be limited to the minimum severance payment, if\nany, required by applicable law.\n\n**7.5 Redundancy.** Where the Employee has completed twelve (12) months of\ncontinuous service and the employment is terminated by reason of redundancy:\n\n  (a) where the Employer has offered the Employee suitable alternative\n      employment, the Employee shall receive the Standard Severance Payment;\n\n  (b) where no suitable alternative employment has been offered and the\n      Employee has completed five (5) years of continuous service, the\n      Employee shall receive the Premium Redundancy Payment; and\n\n  (c) in any other case, the Employee shall receive the Enhanced Severance\n      Payment.\n\n**7.6 Other terminations.** In any other case in which the Employee has\ncompleted twelve (12) months of continuous service, the Employee shall\nreceive:\n\n  (a) where the Employer has given notice of termination in writing: the\n      Enhanced Severance Payment if the Employee has completed five (5) years\n      of continuous service, and otherwise the Standard Severance Payment; or\n\n  (b) where the Employer has failed to give notice of termination in writing:\n      the Enhanced Severance Payment, irrespective of length of service.\n\n**7.7 Definitions.** In this Section 7: \"**Cause**\" means gross misconduct,\npersistent underperformance following written warning, or a material breach of\nthe Employee's duties; \"**Standard Severance Payment**\" means an amount equal\nto one (1) month's base salary for each completed year of service;\n\"**Enhanced Severance Payment**\" means the Standard Severance Payment plus an\namount equal to three (3) months' base salary; and \"**Premium Redundancy\nPayment**\" means the Standard Severance Payment plus an amount equal to six\n(6) months' base salary.", "ontology": {"atoms": [{"id": "terminated_for_cause", "question": "Was the employment terminated by the employer for Cause?"}, {"id": "gross_misconduct", "question": "Did the Cause consist of gross misconduct?"}, {"id": "voluntary_resignation", "question": "Did the employee resign?"}, {"id": "constructive_dismissal", "question": "Was the resignation a constructive dismissal?"}, {"id": "served_12_months", "question": "Had the employee completed 12 months of continuous service at the termination date?"}, {"id": "served_5_years", "question": "Had the employee completed 5 years of continuous service at the termination date?"}, {"id": "redundancy", "question": "Was the termination by reason of redundancy?"}, {"id": "suitable_alternative_offered", "question": "Was suitable alternative employment offered?"}, {"id": "written_notice_given", "question": "Did the employer give notice of termination in writing?"}], "constraints": [{"type": "implies", "if": "gross_misconduct", "then": "terminated_for_cause"}, {"type": "implies", "if": "constructive_dismissal", "then": "voluntary_resignation"}, {"type": "implies", "if": "served_5_years", "then": "served_12_months"}, {"type": "implies", "if": "suitable_alternative_offered", "then": "redundancy"}, {"type": "excludes", "a": "terminated_for_cause", "b": "voluntary_resignation"}, {"type": "excludes", "a": "terminated_for_cause", "b": "redundancy"}, {"type": "excludes", "a": "voluntary_resignation", "b": "redundancy"}]}, "refFlow": {"entry": "n1", "nodes": [{"id": "n1", "type": "decision", "atom": "terminated_for_cause", "true": "n2", "false": "n4"}, {"id": "n2", "type": "decision", "atom": "gross_misconduct", "true": "o_none", "false": "n3"}, {"id": "n3", "type": "decision", "atom": "served_5_years", "true": "o_statutory", "false": "o_none"}, {"id": "n4", "type": "decision", "atom": "voluntary_resignation", "true": "n5", "false": "n6"}, {"id": "n5", "type": "decision", "atom": "constructive_dismissal", "true": "n6", "false": "o_none"}, {"id": "n6", "type": "decision", "atom": "served_12_months", "true": "n7", "false": "o_statutory"}, {"id": "n7", "type": "decision", "atom": "redundancy", "true": "n8", "false": "n10"}, {"id": "n8", "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9"}, {"id": "n9", "type": "decision", "atom": "served_5_years", "true": "o_premium", "false": "o_enhanced"}, {"id": "n10", "type": "decision", "atom": "written_notice_given", "true": "n11", "false": "o_enhanced"}, {"id": "n11", "type": "decision", "atom": "served_5_years", "true": "o_enhanced", "false": "o_standard"}, {"id": "o_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "o_standard", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "o_enhanced", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "o_premium", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "extFlow": {"entry": "e1", "nodes": [{"id": "e1", "type": "decision", "atom": "terminated_for_cause", "true": "e2", "false": "e3"}, {"id": "e2", "type": "decision", "atom": "gross_misconduct", "true": "x_none", "false": "e2b"}, {"id": "e2b", "type": "decision", "atom": "served_5_years", "true": "x_stat", "false": "x_none"}, {"id": "e3", "type": "decision", "atom": "voluntary_resignation", "true": "e4", "false": "e5"}, {"id": "e4", "type": "decision", "atom": "constructive_dismissal", "true": "e5", "false": "x_none"}, {"id": "e5", "type": "decision", "atom": "served_12_months", "true": "e6", "false": "x_stat"}, {"id": "e6", "type": "decision", "atom": "redundancy", "true": "e7", "false": "e9"}, {"id": "e7", "type": "decision", "atom": "suitable_alternative_offered", "true": "x_std", "false": "e8"}, {"id": "e8", "type": "decision", "atom": "served_5_years", "true": "x_prem", "false": "x_enh"}, {"id": "e9", "type": "decision", "atom": "written_notice_given", "true": "e10", "false": "x_enh"}, {"id": "e10", "type": "decision", "atom": "served_5_years", "true": "x_enh", "false": "x_std"}, {"id": "x_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "x_stat", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "x_std", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "x_enh", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "x_prem", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "groundTruth": null, "lean": "/-- The document implements the reference logic exactly: on every legally\npossible assignment the two flows agree. Kernel-checked by `decide`. -/\ntheorem equivalent : counterexamples = [] := by decide\n\ntheorem equivalent_all :\n    allAssignments.all (fun a => !valid a || (reference a == extracted a)) = true := by\n  decide"}, {"id": "severance-statutory-floor-dropped", "title": "Severance clause — draft B", "domainLabel": "Employment", "document": "examples/termination_severance/clause_divergent.md", "flowId": "termination-severance-v2", "text": "## 7. Severance\n\n**7.1 Entitlement.** On termination of the Employee's employment, the\nEmployee's sole and exclusive entitlement to severance shall be as set out in\nthis Section 7.\n\n**7.2 Qualifying service.** The Employee shall not be entitled to any\nseverance payment unless, as at the Termination Date, the Employee has\ncompleted twelve (12) months of continuous service with the Employer.\n\n**7.3 Dismissal for Cause.** Subject to Section 7.2, where the Employer\nterminates the employment for Cause, no severance payment shall be due, save\nthat where the Cause relied upon is not gross misconduct and the Employee has\ncompleted five (5) years of continuous service, the Employee shall receive the\nminimum severance payment, if any, required by applicable law.\n\n**7.4 Resignation.** No severance payment shall be due on the Employee's\nresignation, except that a resignation in direct response to a fundamental\nbreach of this Agreement by the Employer (a \"**Constructive Dismissal**\")\nshall be treated as a termination by the Employer without Cause, with the\nEmployee's entitlement determined under Sections 7.5 and 7.6.\n\n**7.5 Redundancy.** Subject to Sections 7.2 to 7.4, where the employment is\nterminated by reason of redundancy the Employee shall receive:\n\n  (a) the Standard Severance Payment, where suitable alternative employment\n      has been offered by the Employer;\n\n  (b) the Premium Redundancy Payment, where no suitable alternative\n      employment has been offered and the Employee has completed five (5)\n      years of continuous service; or\n\n  (c) the Enhanced Severance Payment, in any other case.\n\n**7.6 Other terminations.** Subject to Sections 7.2 to 7.4, in any case not\nfalling within Section 7.5 the Employee shall receive:\n\n  (a) where the Employer has given the Employee written notice of\n      termination: the Enhanced Severance Payment where the Employee has\n      completed five (5) years of continuous service, and the Standard\n      Severance Payment otherwise; or\n\n  (b) the Enhanced Severance Payment, where no written notice of termination\n      has been given by the Employer.\n\n**7.7 Definitions.** In this Section 7: \"**Cause**\" means gross misconduct,\npersistent underperformance following written warning, or a material breach of\nthe Employee's duties; \"**Standard Severance Payment**\" means an amount equal\nto one (1) month's base salary for each completed year of service;\n\"**Enhanced Severance Payment**\" means the Standard Severance Payment plus an\namount equal to three (3) months' base salary; and \"**Premium Redundancy\nPayment**\" means the Standard Severance Payment plus an amount equal to six\n(6) months' base salary.", "ontology": {"atoms": [{"id": "terminated_for_cause", "question": "Was the employment terminated by the employer for Cause?"}, {"id": "gross_misconduct", "question": "Did the Cause consist of gross misconduct?"}, {"id": "voluntary_resignation", "question": "Did the employee resign?"}, {"id": "constructive_dismissal", "question": "Was the resignation a constructive dismissal?"}, {"id": "served_12_months", "question": "Had the employee completed 12 months of continuous service at the termination date?"}, {"id": "served_5_years", "question": "Had the employee completed 5 years of continuous service at the termination date?"}, {"id": "redundancy", "question": "Was the termination by reason of redundancy?"}, {"id": "suitable_alternative_offered", "question": "Was suitable alternative employment offered?"}, {"id": "written_notice_given", "question": "Did the employer give notice of termination in writing?"}], "constraints": [{"type": "implies", "if": "gross_misconduct", "then": "terminated_for_cause"}, {"type": "implies", "if": "constructive_dismissal", "then": "voluntary_resignation"}, {"type": "implies", "if": "served_5_years", "then": "served_12_months"}, {"type": "implies", "if": "suitable_alternative_offered", "then": "redundancy"}, {"type": "excludes", "a": "terminated_for_cause", "b": "voluntary_resignation"}, {"type": "excludes", "a": "terminated_for_cause", "b": "redundancy"}, {"type": "excludes", "a": "voluntary_resignation", "b": "redundancy"}]}, "refFlow": {"entry": "n1", "nodes": [{"id": "n1", "type": "decision", "atom": "terminated_for_cause", "true": "n2", "false": "n4"}, {"id": "n2", "type": "decision", "atom": "gross_misconduct", "true": "o_none", "false": "n3"}, {"id": "n3", "type": "decision", "atom": "served_5_years", "true": "o_statutory", "false": "o_none"}, {"id": "n4", "type": "decision", "atom": "voluntary_resignation", "true": "n5", "false": "n6"}, {"id": "n5", "type": "decision", "atom": "constructive_dismissal", "true": "n6", "false": "o_none"}, {"id": "n6", "type": "decision", "atom": "served_12_months", "true": "n7", "false": "o_statutory"}, {"id": "n7", "type": "decision", "atom": "redundancy", "true": "n8", "false": "n10"}, {"id": "n8", "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9"}, {"id": "n9", "type": "decision", "atom": "served_5_years", "true": "o_premium", "false": "o_enhanced"}, {"id": "n10", "type": "decision", "atom": "written_notice_given", "true": "n11", "false": "o_enhanced"}, {"id": "n11", "type": "decision", "atom": "served_5_years", "true": "o_enhanced", "false": "o_standard"}, {"id": "o_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "o_standard", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "o_enhanced", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "o_premium", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "extFlow": {"entry": "e0", "nodes": [{"id": "e0", "type": "decision", "atom": "served_12_months", "true": "e1", "false": "x_none"}, {"id": "e1", "type": "decision", "atom": "terminated_for_cause", "true": "e2", "false": "e3"}, {"id": "e2", "type": "decision", "atom": "gross_misconduct", "true": "x_none", "false": "e2b"}, {"id": "e2b", "type": "decision", "atom": "served_5_years", "true": "x_stat", "false": "x_none"}, {"id": "e3", "type": "decision", "atom": "voluntary_resignation", "true": "e4", "false": "e5"}, {"id": "e4", "type": "decision", "atom": "constructive_dismissal", "true": "e5", "false": "x_none"}, {"id": "e5", "type": "decision", "atom": "redundancy", "true": "e6", "false": "e8"}, {"id": "e6", "type": "decision", "atom": "suitable_alternative_offered", "true": "x_std", "false": "e7"}, {"id": "e7", "type": "decision", "atom": "served_5_years", "true": "x_prem", "false": "x_enh"}, {"id": "e8", "type": "decision", "atom": "written_notice_given", "true": "e9", "false": "x_enh"}, {"id": "e9", "type": "decision", "atom": "served_5_years", "true": "x_enh", "false": "x_std"}, {"id": "x_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "x_stat", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "x_std", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "x_enh", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "x_prem", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "groundTruth": {"clause": "7.2", "kind": "condition_promoted_to_gate", "summary": "Twelve months of continuous service is drafted as a precondition for ANY severance, silently removing the statutory-minimum floor the reference flow guarantees employees with under twelve months of service on a no-fault termination.", "narrative": "An employee with eight months of service is dismissed without cause, with written notice, and did not resign. The reference policy entitles them to the statutory minimum severance; the drafted contract denies them any severance at all.", "reference_outcome": "STATUTORY_MINIMUM", "document_outcome": "NO_SEVERANCE", "assignment": {"terminated_for_cause": false, "gross_misconduct": false, "voluntary_resignation": false, "constructive_dismissal": false, "served_12_months": false, "served_5_years": false, "redundancy": false, "suitable_alternative_offered": false, "written_notice_given": true}}, "lean": "/-- The document diverges from the reference logic: there is a legally\npossible assignment on which the two flows disagree. Kernel-checked. -/\ntheorem divergent : counterexamples ≠ [] := by decide\n\n/-- Exactly 8 valid assignments diverge. Kernel-checked. -/\ntheorem divergent_count : counterexamples.length = 8 := by decide"}, {"id": "severance-notice-branch-flipped", "title": "Severance clause — draft C", "domainLabel": "Employment", "document": "examples/termination_severance/clause_divergent_notice_flip.md", "flowId": "termination-severance-v2", "text": "## 7. Severance\n\n**7.1 Entitlement.** Upon termination of the Employee's employment, the\nEmployee shall be entitled to a severance payment determined in accordance\nwith this Section 7, which sets out the Employee's sole and exclusive\nentitlement to severance.\n\n**7.2 Dismissal for Cause.** Where the employment is terminated by the\nEmployer for Cause:\n\n  (a) no severance payment shall be due where the Cause relied upon consists\n      of gross misconduct; and\n\n  (b) in any other case of dismissal for Cause, no severance payment shall be\n      due unless, as at the Termination Date, the Employee has completed five\n      (5) years of continuous service, in which case the Employee's\n      entitlement shall be limited to the minimum severance payment, if any,\n      required by applicable law.\n\n**7.3 Resignation.** No severance payment shall be due where the employment\nends by reason of the Employee's resignation; provided that a resignation by\nthe Employee in direct response to a fundamental breach of this Agreement by\nthe Employer (a \"**Constructive Dismissal**\") shall not be treated as a\nresignation for the purposes of this Section 7, and the Employee's entitlement\nshall instead be determined under Sections 7.4 to 7.6 as if the employment had\nbeen terminated by the Employer without Cause.\n\n**7.4 Qualifying service.** Where the Employee's entitlement falls to be\ndetermined under this Section 7.4 to 7.6 and, as at the Termination Date, the\nEmployee has not completed twelve (12) months of continuous service, the\nEmployee's entitlement shall be limited to the minimum severance payment, if\nany, required by applicable law.\n\n**7.5 Redundancy.** Where the Employee has completed twelve (12) months of\ncontinuous service and the employment is terminated by reason of redundancy:\n\n  (a) where the Employer has offered the Employee suitable alternative\n      employment, the Employee shall receive the Standard Severance Payment;\n\n  (b) where no suitable alternative employment has been offered and the\n      Employee has completed five (5) years of continuous service, the\n      Employee shall receive the Premium Redundancy Payment; and\n\n  (c) in any other case, the Employee shall receive the Enhanced Severance\n      Payment.\n\n**7.6 Other terminations.** In any other case in which the Employee has\ncompleted twelve (12) months of continuous service, the Employee shall\nreceive:\n\n  (a) where the Employer has given notice of termination in writing: the\n      Enhanced Severance Payment, irrespective of length of service; or\n\n  (b) where the Employer has failed to give notice of termination in writing:\n      the Enhanced Severance Payment if the Employee has completed five (5)\n      years of continuous service, and otherwise the Standard Severance\n      Payment.\n\n**7.7 Definitions.** In this Section 7: \"**Cause**\" means gross misconduct,\npersistent underperformance following written warning, or a material breach of\nthe Employee's duties; \"**Standard Severance Payment**\" means an amount equal\nto one (1) month's base salary for each completed year of service;\n\"**Enhanced Severance Payment**\" means the Standard Severance Payment plus an\namount equal to three (3) months' base salary; and \"**Premium Redundancy\nPayment**\" means the Standard Severance Payment plus an amount equal to six\n(6) months' base salary.", "ontology": {"atoms": [{"id": "terminated_for_cause", "question": "Was the employment terminated by the employer for Cause?"}, {"id": "gross_misconduct", "question": "Did the Cause consist of gross misconduct?"}, {"id": "voluntary_resignation", "question": "Did the employee resign?"}, {"id": "constructive_dismissal", "question": "Was the resignation a constructive dismissal?"}, {"id": "served_12_months", "question": "Had the employee completed 12 months of continuous service at the termination date?"}, {"id": "served_5_years", "question": "Had the employee completed 5 years of continuous service at the termination date?"}, {"id": "redundancy", "question": "Was the termination by reason of redundancy?"}, {"id": "suitable_alternative_offered", "question": "Was suitable alternative employment offered?"}, {"id": "written_notice_given", "question": "Did the employer give notice of termination in writing?"}], "constraints": [{"type": "implies", "if": "gross_misconduct", "then": "terminated_for_cause"}, {"type": "implies", "if": "constructive_dismissal", "then": "voluntary_resignation"}, {"type": "implies", "if": "served_5_years", "then": "served_12_months"}, {"type": "implies", "if": "suitable_alternative_offered", "then": "redundancy"}, {"type": "excludes", "a": "terminated_for_cause", "b": "voluntary_resignation"}, {"type": "excludes", "a": "terminated_for_cause", "b": "redundancy"}, {"type": "excludes", "a": "voluntary_resignation", "b": "redundancy"}]}, "refFlow": {"entry": "n1", "nodes": [{"id": "n1", "type": "decision", "atom": "terminated_for_cause", "true": "n2", "false": "n4"}, {"id": "n2", "type": "decision", "atom": "gross_misconduct", "true": "o_none", "false": "n3"}, {"id": "n3", "type": "decision", "atom": "served_5_years", "true": "o_statutory", "false": "o_none"}, {"id": "n4", "type": "decision", "atom": "voluntary_resignation", "true": "n5", "false": "n6"}, {"id": "n5", "type": "decision", "atom": "constructive_dismissal", "true": "n6", "false": "o_none"}, {"id": "n6", "type": "decision", "atom": "served_12_months", "true": "n7", "false": "o_statutory"}, {"id": "n7", "type": "decision", "atom": "redundancy", "true": "n8", "false": "n10"}, {"id": "n8", "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9"}, {"id": "n9", "type": "decision", "atom": "served_5_years", "true": "o_premium", "false": "o_enhanced"}, {"id": "n10", "type": "decision", "atom": "written_notice_given", "true": "n11", "false": "o_enhanced"}, {"id": "n11", "type": "decision", "atom": "served_5_years", "true": "o_enhanced", "false": "o_standard"}, {"id": "o_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "o_standard", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "o_enhanced", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "o_premium", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "extFlow": {"entry": "e1", "nodes": [{"id": "e1", "type": "decision", "atom": "terminated_for_cause", "true": "e2", "false": "e3"}, {"id": "e2", "type": "decision", "atom": "gross_misconduct", "true": "x_none", "false": "e2b"}, {"id": "e2b", "type": "decision", "atom": "served_5_years", "true": "x_stat", "false": "x_none"}, {"id": "e3", "type": "decision", "atom": "voluntary_resignation", "true": "e4", "false": "e5"}, {"id": "e4", "type": "decision", "atom": "constructive_dismissal", "true": "e5", "false": "x_none"}, {"id": "e5", "type": "decision", "atom": "served_12_months", "true": "e6", "false": "x_stat"}, {"id": "e6", "type": "decision", "atom": "redundancy", "true": "e7", "false": "e9"}, {"id": "e7", "type": "decision", "atom": "suitable_alternative_offered", "true": "x_std", "false": "e8"}, {"id": "e8", "type": "decision", "atom": "served_5_years", "true": "x_prem", "false": "x_enh"}, {"id": "e9", "type": "decision", "atom": "written_notice_given", "true": "x_enh", "false": "e10"}, {"id": "e10", "type": "decision", "atom": "served_5_years", "true": "x_enh", "false": "x_std"}, {"id": "x_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "x_stat", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "x_std", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "x_enh", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "x_prem", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "groundTruth": {"clause": "7.6", "kind": "branch_polarity_flip", "summary": "The notice condition is drafted the wrong way round: the reference flow pays enhanced severance unconditionally when the employer FAILED to give written notice and applies the five-year tenure test when notice was given; the drafted clause does the opposite.", "narrative": "An employee with three years of service is dismissed without cause and without written notice, for a reason other than redundancy. The reference policy compensates the employer's failure to give written notice with enhanced severance regardless of tenure; the drafted contract pays only standard severance in exactly that case.", "reference_outcome": "ENHANCED_SEVERANCE", "document_outcome": "STANDARD_SEVERANCE", "assignment": {"terminated_for_cause": false, "gross_misconduct": false, "voluntary_resignation": false, "constructive_dismissal": false, "served_12_months": true, "served_5_years": false, "redundancy": false, "suitable_alternative_offered": false, "written_notice_given": false}}, "lean": "/-- The document diverges from the reference logic: there is a legally\npossible assignment on which the two flows disagree. Kernel-checked. -/\ntheorem divergent : counterexamples ≠ [] := by decide\n\n/-- Exactly 4 valid assignments diverge. Kernel-checked. -/\ntheorem divergent_count : counterexamples.length = 4 := by decide"}, {"id": "severance-constructive-dismissal-dropped", "title": "Severance clause — draft D", "domainLabel": "Employment", "document": "examples/termination_severance/clause_divergent_constructive_dropped.md", "flowId": "termination-severance-v2", "text": "## 7. Severance\n\n**7.1 Entitlement.** On termination of the Employee's employment, the\nEmployee's sole and exclusive entitlement to severance shall be as set out in\nthis Section 7.\n\n**7.2 Dismissal for Cause.** Where the Employer terminates the employment for\nCause, no severance payment shall be due, save that where the Cause relied\nupon is not gross misconduct and the Employee has, as at the Termination Date,\ncompleted five (5) years of continuous service, the Employee shall receive the\nminimum severance payment, if any, required by applicable law.\n\n**7.3 Resignation.** No severance payment shall be due where the employment\nends by reason of the Employee's resignation.\n\n**7.4 Qualifying service.** Where the employment is terminated by the Employer\nother than for Cause and, as at the Termination Date, the Employee has not\ncompleted twelve (12) months of continuous service, the Employee's entitlement\nshall be limited to the minimum severance payment, if any, required by\napplicable law.\n\n**7.5 Redundancy.** Where the Employee has completed twelve (12) months of\ncontinuous service and the employment is terminated by reason of redundancy,\nthe Employee shall receive:\n\n  (a) the Standard Severance Payment, where the Employer has offered the\n      Employee suitable alternative employment;\n\n  (b) the Premium Redundancy Payment, where no suitable alternative\n      employment has been offered and the Employee has completed five (5)\n      years of continuous service; or\n\n  (c) the Enhanced Severance Payment, in any other case.\n\n**7.6 Other terminations.** In any other case in which the Employee has\ncompleted twelve (12) months of continuous service, the Employee shall\nreceive:\n\n  (a) where the Employer has given the Employee written notice of\n      termination: the Enhanced Severance Payment where the Employee has\n      completed five (5) years of continuous service, and the Standard\n      Severance Payment otherwise; or\n\n  (b) the Enhanced Severance Payment, where no written notice of termination\n      has been given by the Employer.\n\n**7.7 Definitions.** In this Section 7: \"**Cause**\" means gross misconduct,\npersistent underperformance following written warning, or a material breach of\nthe Employee's duties; \"**Standard Severance Payment**\" means an amount equal\nto one (1) month's base salary for each completed year of service;\n\"**Enhanced Severance Payment**\" means the Standard Severance Payment plus an\namount equal to three (3) months' base salary; and \"**Premium Redundancy\nPayment**\" means the Standard Severance Payment plus an amount equal to six\n(6) months' base salary.", "ontology": {"atoms": [{"id": "terminated_for_cause", "question": "Was the employment terminated by the employer for Cause?"}, {"id": "gross_misconduct", "question": "Did the Cause consist of gross misconduct?"}, {"id": "voluntary_resignation", "question": "Did the employee resign?"}, {"id": "constructive_dismissal", "question": "Was the resignation a constructive dismissal?"}, {"id": "served_12_months", "question": "Had the employee completed 12 months of continuous service at the termination date?"}, {"id": "served_5_years", "question": "Had the employee completed 5 years of continuous service at the termination date?"}, {"id": "redundancy", "question": "Was the termination by reason of redundancy?"}, {"id": "suitable_alternative_offered", "question": "Was suitable alternative employment offered?"}, {"id": "written_notice_given", "question": "Did the employer give notice of termination in writing?"}], "constraints": [{"type": "implies", "if": "gross_misconduct", "then": "terminated_for_cause"}, {"type": "implies", "if": "constructive_dismissal", "then": "voluntary_resignation"}, {"type": "implies", "if": "served_5_years", "then": "served_12_months"}, {"type": "implies", "if": "suitable_alternative_offered", "then": "redundancy"}, {"type": "excludes", "a": "terminated_for_cause", "b": "voluntary_resignation"}, {"type": "excludes", "a": "terminated_for_cause", "b": "redundancy"}, {"type": "excludes", "a": "voluntary_resignation", "b": "redundancy"}]}, "refFlow": {"entry": "n1", "nodes": [{"id": "n1", "type": "decision", "atom": "terminated_for_cause", "true": "n2", "false": "n4"}, {"id": "n2", "type": "decision", "atom": "gross_misconduct", "true": "o_none", "false": "n3"}, {"id": "n3", "type": "decision", "atom": "served_5_years", "true": "o_statutory", "false": "o_none"}, {"id": "n4", "type": "decision", "atom": "voluntary_resignation", "true": "n5", "false": "n6"}, {"id": "n5", "type": "decision", "atom": "constructive_dismissal", "true": "n6", "false": "o_none"}, {"id": "n6", "type": "decision", "atom": "served_12_months", "true": "n7", "false": "o_statutory"}, {"id": "n7", "type": "decision", "atom": "redundancy", "true": "n8", "false": "n10"}, {"id": "n8", "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9"}, {"id": "n9", "type": "decision", "atom": "served_5_years", "true": "o_premium", "false": "o_enhanced"}, {"id": "n10", "type": "decision", "atom": "written_notice_given", "true": "n11", "false": "o_enhanced"}, {"id": "n11", "type": "decision", "atom": "served_5_years", "true": "o_enhanced", "false": "o_standard"}, {"id": "o_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "o_standard", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "o_enhanced", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "o_premium", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "extFlow": {"entry": "e1", "nodes": [{"id": "e1", "type": "decision", "atom": "terminated_for_cause", "true": "e2", "false": "e3"}, {"id": "e2", "type": "decision", "atom": "gross_misconduct", "true": "x_none", "false": "e2b"}, {"id": "e2b", "type": "decision", "atom": "served_5_years", "true": "x_stat", "false": "x_none"}, {"id": "e3", "type": "decision", "atom": "voluntary_resignation", "true": "x_none", "false": "e5"}, {"id": "e5", "type": "decision", "atom": "served_12_months", "true": "e6", "false": "x_stat"}, {"id": "e6", "type": "decision", "atom": "redundancy", "true": "e7", "false": "e9"}, {"id": "e7", "type": "decision", "atom": "suitable_alternative_offered", "true": "x_std", "false": "e8"}, {"id": "e8", "type": "decision", "atom": "served_5_years", "true": "x_prem", "false": "x_enh"}, {"id": "e9", "type": "decision", "atom": "written_notice_given", "true": "e10", "false": "x_enh"}, {"id": "e10", "type": "decision", "atom": "served_5_years", "true": "x_enh", "false": "x_std"}, {"id": "x_none", "type": "outcome", "outcome": "NO_SEVERANCE"}, {"id": "x_stat", "type": "outcome", "outcome": "STATUTORY_MINIMUM"}, {"id": "x_std", "type": "outcome", "outcome": "STANDARD_SEVERANCE"}, {"id": "x_enh", "type": "outcome", "outcome": "ENHANCED_SEVERANCE"}, {"id": "x_prem", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY"}]}, "groundTruth": {"clause": "7.3", "kind": "node_splice", "summary": "The constructive-dismissal carve-out is missing: the reference flow treats a resignation in response to the employer's fundamental breach as a termination by the employer, with severance payable under the ordinary provisions; the drafted clause treats every resignation alike and pays nothing.", "narrative": "An employee with six years of service resigns in direct response to the employer's fundamental breach of the agreement — a constructive dismissal. The reference policy treats this as a termination by the employer and pays enhanced severance; the drafted contract treats every resignation alike and pays nothing.", "reference_outcome": "ENHANCED_SEVERANCE", "document_outcome": "NO_SEVERANCE", "assignment": {"terminated_for_cause": false, "gross_misconduct": false, "voluntary_resignation": true, "constructive_dismissal": true, "served_12_months": true, "served_5_years": true, "redundancy": false, "suitable_alternative_offered": false, "written_notice_given": true}}, "lean": "/-- The document diverges from the reference logic: there is a legally\npossible assignment on which the two flows disagree. Kernel-checked. -/\ntheorem divergent : counterexamples ≠ [] := by decide\n\n/-- Exactly 6 valid assignments diverge. Kernel-checked. -/\ntheorem divergent_count : counterexamples.length = 6 := by decide"}, {"id": "claim-faithful", "title": "Claim payout clause — draft A", "domainLabel": "Insurance", "document": "examples/claim_eligibility/clause_faithful.md", "flowId": "claim-eligibility-v1", "text": "## 4. Claims\n\n**4.1 Conditions of cover.** The Insurer shall have no liability in respect of\nany claim where (a) the Policy was not in force on the date of loss, whether by\nreason of non-payment of premium, lapse, or cancellation, or (b) the loss was\nproximately caused by an Excluded Peril.\n\n**4.2 Deductible.** Where the assessed loss does not exceed the Deductible, the\nclaim shall be admitted but no payment shall be due under the Policy.\n\n**4.3 Payment.** Subject to Sections 4.1 and 4.2, the Insurer shall pay the\nassessed loss less the Deductible (the \"**Claim Amount**\") as follows:\n\n  (a) the full Claim Amount, where the Insured has given notice of the claim\n      within thirty (30) days of the date of loss and has provided complete\n      supporting documentation in accordance with Section 4.4; or\n\n  (b) the Claim Amount reduced by fifteen per cent (15%), where the Insured\n      has failed to give notice within thirty (30) days of the date of loss,\n      or has given timely notice but has not provided complete supporting\n      documentation.\n\n**4.4 Documentation.** Complete supporting documentation means proof of loss,\nproof of ownership, and evidence of valuation, each in a form reasonably\nacceptable to the Insurer.\n\n**4.5 Definitions.** \"**Excluded Peril**\" means flood, war, or a wilful act of\nthe Insured; \"**Deductible**\" means the amount specified in the Schedule.", "ontology": {"atoms": [{"id": "policy_in_force", "question": "Was the policy in force on the date of loss?"}, {"id": "excluded_peril", "question": "Was the loss caused by an excluded peril?"}, {"id": "loss_exceeds_deductible", "question": "Does the loss amount exceed the deductible?"}, {"id": "notice_within_30_days", "question": "Was the claim notified within 30 days of the loss?"}, {"id": "documentation_complete", "question": "Has the insured provided complete supporting documentation?"}], "constraints": []}, "refFlow": {"entry": "n1", "nodes": [{"id": "n1", "type": "decision", "atom": "policy_in_force", "true": "n2", "false": "o_denied"}, {"id": "n2", "type": "decision", "atom": "excluded_peril", "true": "o_denied", "false": "n3"}, {"id": "n3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "n4", "false": "o_below"}, {"id": "n4", "type": "decision", "atom": "notice_within_30_days", "true": "n5", "false": "o_reduced"}, {"id": "n5", "type": "decision", "atom": "documentation_complete", "true": "o_full", "false": "o_reduced"}, {"id": "o_denied", "type": "outcome", "outcome": "DENIED"}, {"id": "o_below", "type": "outcome", "outcome": "BELOW_DEDUCTIBLE"}, {"id": "o_full", "type": "outcome", "outcome": "FULL_PAYMENT"}, {"id": "o_reduced", "type": "outcome", "outcome": "REDUCED_PAYMENT"}]}, "extFlow": {"entry": "e1", "nodes": [{"id": "e1", "type": "decision", "atom": "policy_in_force", "true": "e2", "false": "x_den"}, {"id": "e2", "type": "decision", "atom": "excluded_peril", "true": "x_den", "false": "e3"}, {"id": "e3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "e4", "false": "x_below"}, {"id": "e4", "type": "decision", "atom": "notice_within_30_days", "true": "e5", "false": "x_red"}, {"id": "e5", "type": "decision", "atom": "documentation_complete", "true": "x_full", "false": "x_red"}, {"id": "x_den", "type": "outcome", "outcome": "DENIED"}, {"id": "x_below", "type": "outcome", "outcome": "BELOW_DEDUCTIBLE"}, {"id": "x_full", "type": "outcome", "outcome": "FULL_PAYMENT"}, {"id": "x_red", "type": "outcome", "outcome": "REDUCED_PAYMENT"}]}, "groundTruth": null, "lean": "/-- The document implements the reference logic exactly: on every legally\npossible assignment the two flows agree. Kernel-checked by `decide`. -/\ntheorem equivalent : counterexamples = [] := by decide\n\ntheorem equivalent_all :\n    allAssignments.all (fun a => !valid a || (reference a == extracted a)) = true := by\n  decide"}, {"id": "claim-late-notice-escalated", "title": "Claim payout clause — draft B", "domainLabel": "Insurance", "document": "examples/claim_eligibility/clause_divergent.md", "flowId": "claim-eligibility-v1", "text": "## 4. Claims\n\n**4.1 Conditions of cover.** The Insurer shall have no liability in respect of\nany claim where the Policy was not in force on the date of loss (whether by\nreason of non-payment of premium, lapse, or cancellation) or where the loss\nwas proximately caused by an Excluded Peril.\n\n**4.2 Deductible.** Where the assessed loss does not exceed the Deductible,\nthe claim shall be admitted but no payment shall be due under the Policy.\n\n**4.3 Notification.** The Insured shall give notice of any claim within thirty\n(30) days of the date of loss. Any claim not notified within such period shall\nbe denied and no amount shall be payable in respect of it.\n\n**4.4 Payment.** Subject to Sections 4.1 to 4.3, the Insurer shall pay the\nassessed loss less the Deductible (the \"**Claim Amount**\") as follows:\n\n  (a) the full Claim Amount, where the Insured has provided complete\n      supporting documentation in accordance with Section 4.5; or\n\n  (b) the Claim Amount reduced by fifteen per cent (15%), where the Insured\n      has not provided complete supporting documentation.\n\n**4.5 Documentation.** Complete supporting documentation means proof of loss,\nproof of ownership, and evidence of valuation, each in a form reasonably\nacceptable to the Insurer.\n\n**4.6 Definitions.** \"**Excluded Peril**\" means flood, war, or a wilful act of\nthe Insured; \"**Deductible**\" means the amount specified in the Schedule.", "ontology": {"atoms": [{"id": "policy_in_force", "question": "Was the policy in force on the date of loss?"}, {"id": "excluded_peril", "question": "Was the loss caused by an excluded peril?"}, {"id": "loss_exceeds_deductible", "question": "Does the loss amount exceed the deductible?"}, {"id": "notice_within_30_days", "question": "Was the claim notified within 30 days of the loss?"}, {"id": "documentation_complete", "question": "Has the insured provided complete supporting documentation?"}], "constraints": []}, "refFlow": {"entry": "n1", "nodes": [{"id": "n1", "type": "decision", "atom": "policy_in_force", "true": "n2", "false": "o_denied"}, {"id": "n2", "type": "decision", "atom": "excluded_peril", "true": "o_denied", "false": "n3"}, {"id": "n3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "n4", "false": "o_below"}, {"id": "n4", "type": "decision", "atom": "notice_within_30_days", "true": "n5", "false": "o_reduced"}, {"id": "n5", "type": "decision", "atom": "documentation_complete", "true": "o_full", "false": "o_reduced"}, {"id": "o_denied", "type": "outcome", "outcome": "DENIED"}, {"id": "o_below", "type": "outcome", "outcome": "BELOW_DEDUCTIBLE"}, {"id": "o_full", "type": "outcome", "outcome": "FULL_PAYMENT"}, {"id": "o_reduced", "type": "outcome", "outcome": "REDUCED_PAYMENT"}]}, "extFlow": {"entry": "e1", "nodes": [{"id": "e1", "type": "decision", "atom": "policy_in_force", "true": "e2", "false": "x_den"}, {"id": "e2", "type": "decision", "atom": "excluded_peril", "true": "x_den", "false": "e3"}, {"id": "e3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "e4", "false": "x_below"}, {"id": "e4", "type": "decision", "atom": "notice_within_30_days", "true": "e5", "false": "x_den"}, {"id": "e5", "type": "decision", "atom": "documentation_complete", "true": "x_full", "false": "x_red"}, {"id": "x_den", "type": "outcome", "outcome": "DENIED"}, {"id": "x_below", "type": "outcome", "outcome": "BELOW_DEDUCTIBLE"}, {"id": "x_full", "type": "outcome", "outcome": "FULL_PAYMENT"}, {"id": "x_red", "type": "outcome", "outcome": "REDUCED_PAYMENT"}]}, "groundTruth": {"clause": "4.3", "kind": "penalty_escalated_to_denial", "summary": "Late notification is drafted as a ground for full denial of the claim; the reference flow only applies a 15% reduced-payment adjustment for late notice.", "narrative": "A policyholder with a valid, in-force policy suffers a covered loss well above the deductible and submits complete documentation, but notifies the insurer 35 days after the loss. The agreed policy terms pay the claim reduced by 15%; the drafted wording denies the claim entirely.", "reference_outcome": "REDUCED_PAYMENT", "document_outcome": "DENIED", "assignment": {"policy_in_force": true, "excluded_peril": false, "loss_exceeds_deductible": true, "notice_within_30_days": false, "documentation_complete": true}}, "lean": "/-- The document diverges from the reference logic: there is a legally\npossible assignment on which the two flows disagree. Kernel-checked. -/\ntheorem divergent : counterexamples ≠ [] := by decide\n\n/-- Exactly 2 valid assignments diverge. Kernel-checked. -/\ntheorem divergent_count : counterexamples.length = 2 := by decide"}]};
+
+  /* ---------- helpers ---------- */
+  const $ = (s) => document.querySelector(s);
+  function h(tag, attrs = {}, ...kids) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v);
+    }
+    for (const k of kids) e.append(k);
+    return e;
+  }
+  const SVGNS = "http://www.w3.org/2000/svg";
+  function sv(tag, attrs = {}) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    return e;
+  }
+
+  /* ---------- logic ---------- */
+  function isValid(constraints, a) {
+    const viol = [];
+    for (const c of constraints) {
+      if (c.type === "implies" && a[c.if] && !a[c.then]) viol.push(`${c.if} requires ${c.then}`);
+      if (c.type === "excludes" && a[c.a] && a[c.b]) viol.push(`${c.a} and ${c.b} cannot both hold`);
+    }
+    return viol;
+  }
+  function evaluate(flow, a) {
+    const N = Object.fromEntries(flow.nodes.map(n => [n.id, n]));
+    let id = flow.entry;
+    const nodes = [], edges = [];
+    while (N[id].type === "decision") {
+      nodes.push(id);
+      const branch = a[N[id].atom] ? "true" : "false";
+      edges.push(id + ":" + branch);
+      id = N[id][branch];
+    }
+    return { outcome: N[id].outcome, nodes, edges, finalEdge: edges[edges.length - 1] };
+  }
+  function* allAssignments(atomIds) {
+    const n = atomIds.length;
+    for (let m = 0; m < (1 << n); m++) {
+      const a = {};
+      atomIds.forEach((id, i) => a[id] = !!(m & (1 << i)));
+      yield a;
+    }
+  }
+  function certifyCase(cs) {
+    const atomIds = cs.ontology.atoms.map(a => a.id);
+    let valid = 0; const cxs = [];
+    for (const a of allAssignments(atomIds)) {
+      if (isValid(cs.ontology.constraints, a).length) continue;
+      valid++;
+      if (evaluate(cs.refFlow, a).outcome !== evaluate(cs.extFlow, a).outcome) cxs.push({ ...a });
+    }
+    return { total: 1 << atomIds.length, valid, cxs };
+  }
+
+  /* ---------- flow layout (layered DAG, left-to-right) ---------- */
+  const NW = 148, NH = 38, OW = 148, OH = 30, COL = 182, ROW = 50, PAD = 14;
+  function layoutFlow(flow) {
+    const N = Object.fromEntries(flow.nodes.map(n => [n.id, n]));
+    const layer = { [flow.entry]: 0 };
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const n of flow.nodes) {
+        if (n.type !== "decision" || layer[n.id] === undefined) continue;
+        for (const b of ["true", "false"]) {
+          const t = n[b];
+          if (N[t].type === "decision" && (layer[t] ?? -1) < layer[n.id] + 1) { layer[t] = layer[n.id] + 1; changed = true; }
+        }
+      }
+    }
+    let slot = 0;
+    const decY = {}, outs = [], edges = [];
+    function place(id) {
+      const n = N[id], ys = [];
+      for (const b of ["true", "false"]) {
+        const t = n[b], tn = N[t], label = b === "true" ? "yes" : "no";
+        if (tn.type === "outcome") {
+          const y = slot++ * ROW;
+          outs.push({ inst: id + ":" + b, outcome: tn.outcome, layer: layer[id] + 1, y });
+          edges.push({ key: id + ":" + b, from: id, toInst: id + ":" + b, label });
+          ys.push(y);
+        } else if (decY[t] === undefined) {
+          ys.push(place(t));
+          edges.push({ key: id + ":" + b, from: id, toDec: t, label });
+        } else {
+          edges.push({ key: id + ":" + b, from: id, toDec: t, label, rejoin: true });
+        }
+      }
+      const y = ys.length ? (Math.min(...ys) + Math.max(...ys)) / 2 : slot++ * ROW;
+      decY[id] = y;
+      return y;
+    }
+    place(flow.entry);
+    const maxLayer = Math.max(...Object.values(layer), ...outs.map(o => o.layer));
+    return { N, layer, decY, outs, edges, width: (maxLayer + 1) * COL + OW + 2 * PAD, height: slot > 0 ? (slot - 1) * ROW + NH + 2 * PAD + 8 : 120 };
+  }
+  function renderFlow(container, flow, shortLabels, outcomeMeta) {
+    const L = layoutFlow(flow);
+    const svg = sv("svg", { class: "flow", width: L.width, height: L.height, viewBox: `0 0 ${L.width} ${L.height}` });
+    const px = (layer) => PAD + layer * COL;
+    const py = (y) => PAD + y;
+    const pos = {};
+    for (const [id, y] of Object.entries(L.decY)) pos[id] = { x: px(L.layer[id]), y: py(y) };
+    for (const o of L.outs) pos[o.inst] = { x: px(o.layer), y: py(o.y) + (NH - OH) / 2 };
+
+    for (const e of L.edges) {
+      const f = pos[e.from];
+      const t = pos[e.toDec ?? e.toInst];
+      const x1 = f.x + NW, y1 = f.y + NH / 2;
+      const x2 = t.x, y2 = t.y + (e.toDec ? NH : OH) / 2;
+      const midx = (x1 + x2) / 2;
+      const path = sv("path", {
+        class: "eg", "data-key": e.key,
+        d: `M ${x1} ${y1} C ${midx} ${y1}, ${midx} ${y2}, ${x2} ${y2}`,
+      });
+      svg.append(path);
+      const lx = x1 + 10, ly = y1 + (y2 >= y1 ? -4 : 12);
+      const lbl = sv("text", { class: "eg-lbl", x: lx, y: ly }); lbl.textContent = e.label;
+      svg.append(lbl);
+    }
+    for (const [id, y] of Object.entries(L.decY)) {
+      const g = sv("g", { class: "nd", "data-id": id });
+      g.append(sv("rect", { x: pos[id].x, y: pos[id].y, width: NW, height: NH, rx: 7 }));
+      const t = sv("text", { x: pos[id].x + NW / 2, y: pos[id].y + NH / 2 + 4, "text-anchor": "middle" });
+      t.textContent = shortLabels[L.N[id].atom] || L.N[id].atom;
+      g.append(t); svg.append(g);
+    }
+    for (const o of L.outs) {
+      const meta = outcomeMeta[o.outcome] || { label: o.outcome, tone: "mid" };
+      const g = sv("g", { class: "oc " + meta.tone, "data-inst": o.inst });
+      g.append(sv("rect", { x: pos[o.inst].x, y: pos[o.inst].y, width: OW, height: OH, rx: 15 }));
+      const t = sv("text", { x: pos[o.inst].x + OW / 2, y: pos[o.inst].y + OH / 2 + 3.5, "text-anchor": "middle" });
+      t.textContent = meta.label.toUpperCase();
+      g.append(t); svg.append(g);
+    }
+    container.replaceChildren(svg);
+    return svg;
+  }
+  function highlight(svg, path, tone) {
+    svg.querySelectorAll(".hl-a, .hl-b").forEach(e => e.classList.remove("hl-a", "hl-b"));
+    if (!path) return;
+    const cls = tone === "b" ? "hl-b" : "hl-a";
+    for (const id of path.nodes) svg.querySelector(`.nd[data-id="${CSS.escape(id)}"]`)?.classList.add(cls);
+    for (const k of path.edges) svg.querySelector(`.eg[data-key="${CSS.escape(k)}"]`)?.classList.add(cls);
+    svg.querySelector(`.oc[data-inst="${CSS.escape(path.finalEdge)}"]`)?.classList.add(cls);
+  }
+
+  /* ---------- markdown-ish rendering ---------- */
+  function renderDoc(md) {
+    const out = [];
+    for (const block of md.split(/\n\s*\n/)) {
+      const text = block.trim();
+      if (!text) continue;
+      if (text.startsWith("## ")) { out.push({ tag: "h4", html: esc(text.slice(3)) }); continue; }
+      const sub = /^\(([a-z])\)/.test(text);
+      const m = text.match(/^\*\*(\d+\.\d+)/);
+      out.push({ tag: "p", cls: sub ? "sub" : "", clause: m ? m[1] : null, html: inline(esc(text.replace(/\n/g, " "))) });
+    }
+    return out;
+  }
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function inline(s) { return s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>"); }
+
+  /* ---------- app state ---------- */
+  let current = null;
+  const results = {};   // case id -> {valid, cxs}
+  let scenario = {};    // atom id -> bool
+  let refSvg = null, extSvg = null;
+
+  function selectCase(cid) {
+    current = DATA.cases.find(c => c.id === cid);
+    document.querySelectorAll(".case-card").forEach(c => c.classList.toggle("active", c.dataset.cid === cid));
+    // real file paths are revealed only after certification (names would spoil the verdict)
+    $("#docPath").textContent = "· · ·";
+    $("#refSrc").textContent = current.flowId;
+    $("#extSrc").textContent = "· · ·";
+
+    const docView = $("#docView");
+    docView.replaceChildren(...renderDoc(current.text).map(b => {
+      const e = h(b.tag, { class: b.cls || "" });
+      if (b.clause) e.dataset.clause = b.clause;
+      e.innerHTML = b.html;
+      return e;
+    }));
+    $("#flawNote").replaceChildren();
+
+    refSvg = renderFlow($("#refFlowBox"), current.refFlow, DATA.shortLabels, DATA.outcomes);
+    extSvg = renderFlow($("#extFlowBox"), current.extFlow, DATA.shortLabels, DATA.outcomes);
+
+    scenario = {};
+    current.ontology.atoms.forEach(a => scenario[a.id] = false);
+    renderToggles();
+    updateScenario();
+
+    const res = results[cid];
+    $("#progress").textContent = "";
+    if (res) showVerdict(res, true); else hideVerdict();
+  }
+
+  function renderToggles() {
+    const box = $("#toggles");
+    box.replaceChildren(...current.ontology.atoms.map(a =>
+      h("button", {
+        class: "tg" + (scenario[a.id] ? " on" : ""), title: a.question, "data-atom": a.id,
+        onclick: () => { scenario[a.id] = !scenario[a.id]; renderToggles(); updateScenario(); },
+      }, DATA.shortLabels[a.id].replace(/\?$/, ""))
+    ));
+  }
+  function updateScenario() {
+    const viol = isValid(current.ontology.constraints, scenario);
+    const v = $("#validity");
+    if (viol.length) {
+      v.className = "validity bad";
+      v.textContent = "⚠ Not a legally possible scenario: " + viol.join("; ") + ". (Shown anyway — certification skips such worlds.)";
+    } else {
+      v.className = "validity ok";
+      v.textContent = "✓ Legally possible scenario (satisfies all ontology constraints)";
+    }
+    const rp = evaluate(current.refFlow, scenario);
+    const ep = evaluate(current.extFlow, scenario);
+    $("#outRef").textContent = DATA.outcomes[rp.outcome].label;
+    $("#outDoc").textContent = DATA.outcomes[ep.outcome].label;
+    const agree = rp.outcome === ep.outcome;
+    $("#outDocBox").className = agree ? "ref" : "docx";
+    highlight(refSvg, rp, "a");
+    highlight(extSvg, ep, agree ? "a" : "b");
+  }
+
+  function hideVerdict() {
+    $("#verdictBanner").className = "banner";
+    $("#cxPanel").style.display = "none";
+    $("#leanPanel").style.display = "none";
+    $("#leanBadge").style.display = "none";
+    $("#certifyBtn").disabled = false;
+  }
+  function showVerdict(res, instant) {
+    const eq = res.cxs.length === 0;
+    const b = $("#verdictBanner");
+    b.className = "banner show " + (eq ? "eq" : "div");
+    $("#verdictBig").textContent = eq ? "✓ CERTIFIED EQUIVALENT" : "✗ DIVERGENT FROM AGREED POLICY";
+    $("#verdictSub").textContent = eq
+      ? `All ${res.valid} legally possible scenarios produce the same outcome under the contract as under the agreed policy.`
+      : `${res.cxs.length} of ${res.valid} legally possible scenarios produce a different outcome under the contract than under the agreed policy.`;
+    $("#leanBadge").style.display = "";
+    $("#leanPanel").style.display = "";
+    $("#leanCode").textContent = current.lean;
+    $("#docPath").textContent = current.document;
+    $("#extSrc").textContent = "extracted/" + current.id + ".json";
+
+    const card = document.querySelector(`.case-card[data-cid="${current.id}"] .chip.status`);
+    card.className = "chip status " + (eq ? "eq" : "div");
+    card.textContent = eq ? "equivalent" : "divergent";
+
+    if (!eq) {
+      $("#cxPanel").style.display = "";
+      const gt = current.groundTruth;
+      $("#cxNarr").textContent = "“" + gt.narrative + "”";
+      $("#cxRef").textContent = DATA.outcomes[gt.reference_outcome].label;
+      $("#cxDoc").textContent = DATA.outcomes[gt.document_outcome].label;
+      $("#cxList").replaceChildren(...res.cxs.map((cx, i) =>
+        h("button", {
+          class: "cx-chip",
+          onclick: () => { scenario = { ...cx }; renderToggles(); updateScenario(); $("#toggles").scrollIntoView({ behavior: "smooth", block: "center" }); },
+        }, "scenario " + (i + 1))
+      ));
+      // highlight flawed clause + note
+      const p = $(`#docView p[data-clause="${gt.clause}"]`);
+      if (p) p.classList.add("flawed");
+      $("#flawNote").replaceChildren(h("div", { class: "flaw-note" },
+        `Planted flaw (clause ${gt.clause}, ${gt.kind.replace(/_/g, " ")}): ${gt.summary}`));
+      if (!instant) {
+        scenario = { ...gt.assignment }; renderToggles(); updateScenario();
+        if (p) p.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    } else {
+      $("#cxPanel").style.display = "none";
+    }
+    $("#certifyBtn").disabled = true;
+  }
+
+  function runCertification() {
+    if (!current || results[current.id]) return;
+    const btn = $("#certifyBtn"); btn.disabled = true;
+    const res = certifyCase(current);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const dur = reduce ? 0 : 1300;
+    const t0 = performance.now();
+    function tick(now) {
+      const f = dur ? Math.min(1, (now - t0) / dur) : 1;
+      const k = Math.round(f * res.total);
+      const v = Math.round(f * res.valid);
+      $("#progress").textContent = `checking world ${k} / ${res.total} · ${v} legally possible…`;
+      if (f < 1) requestAnimationFrame(tick);
+      else {
+        $("#progress").textContent = `${res.total} worlds checked · ${res.valid} legally possible · done`;
+        results[current.id] = res;
+        showVerdict(res, false);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ---------- boot ---------- */
+  function boot() {
+    const picker = $("#casePicker");
+    for (const c of DATA.cases) {
+      picker.append(h("button", { class: "case-card", "data-cid": c.id, onclick: () => selectCase(c.id) },
+        h("div", { class: "cc-title" }, c.title),
+        h("div", { class: "cc-meta" },
+          h("span", { class: "chip domain" }, c.domainLabel),
+          h("span", { class: "chip status unk" }, "uncertified"),
+        ),
+      ));
+    }
+    $("#certifyBtn").addEventListener("click", runCertification);
+    selectCase(DATA.cases[0].id);
+  }
+  boot();
+</script>

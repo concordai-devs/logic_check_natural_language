@@ -1,0 +1,29 @@
+{
+  "case": "severance-notice-branch-flipped",
+  "source_document": "termination_severance/clause_divergent_notice_flip.md",
+  "ontology_from": "termination_severance/flow.json",
+  "extraction_method": "chat-session extraction (Claude Fable 5), offline — flow read directly from the clause text, node ids and ordering follow the document's own section order",
+  "extracted_at": "2026-07-23",
+  "notes": "Identical structure to the faithful section except 7.6: '(a) where the Employer has given notice ... Enhanced Severance Payment, irrespective of length of service; (b) where the Employer has failed to give notice ... Enhanced if five (5) years ... otherwise Standard'. The unconditional enhancement sits on the notice-given branch and the tenure test on the no-notice branch.",
+  "flow": {
+    "entry": "e1",
+    "nodes": [
+      { "id": "e1",  "type": "decision", "atom": "terminated_for_cause",         "true": "e2",     "false": "e3" },
+      { "id": "e2",  "type": "decision", "atom": "gross_misconduct",             "true": "x_none", "false": "e2b" },
+      { "id": "e2b", "type": "decision", "atom": "served_5_years",               "true": "x_stat", "false": "x_none" },
+      { "id": "e3",  "type": "decision", "atom": "voluntary_resignation",        "true": "e4",     "false": "e5" },
+      { "id": "e4",  "type": "decision", "atom": "constructive_dismissal",       "true": "e5",     "false": "x_none" },
+      { "id": "e5",  "type": "decision", "atom": "served_12_months",             "true": "e6",     "false": "x_stat" },
+      { "id": "e6",  "type": "decision", "atom": "redundancy",                   "true": "e7",     "false": "e9" },
+      { "id": "e7",  "type": "decision", "atom": "suitable_alternative_offered", "true": "x_std",  "false": "e8" },
+      { "id": "e8",  "type": "decision", "atom": "served_5_years",               "true": "x_prem", "false": "x_enh" },
+      { "id": "e9",  "type": "decision", "atom": "written_notice_given",         "true": "x_enh",  "false": "e10" },
+      { "id": "e10", "type": "decision", "atom": "served_5_years",               "true": "x_enh",  "false": "x_std" },
+      { "id": "x_none", "type": "outcome", "outcome": "NO_SEVERANCE" },
+      { "id": "x_stat", "type": "outcome", "outcome": "STATUTORY_MINIMUM" },
+      { "id": "x_std",  "type": "outcome", "outcome": "STANDARD_SEVERANCE" },
+      { "id": "x_enh",  "type": "outcome", "outcome": "ENHANCED_SEVERANCE" },
+      { "id": "x_prem", "type": "outcome", "outcome": "PREMIUM_REDUNDANCY" }
+    ]
+  }
+}

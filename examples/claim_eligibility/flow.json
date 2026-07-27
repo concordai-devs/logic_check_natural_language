@@ -1,0 +1,68 @@
+{
+  "id": "claim-eligibility-v1",
+  "title": "Property insurance claim payout determination",
+  "description": "Determines whether and how much an insurer pays on a property damage claim. Reference logic agreed between insurer and reinsurer/regulator; drafted policy wording must implement exactly this logic.",
+  "ontology": {
+    "atoms": [
+      {
+        "id": "policy_in_force",
+        "question": "Was the policy in force on the date of loss?",
+        "description": "Premiums were paid up and the policy had not lapsed or been cancelled as at the date of loss."
+      },
+      {
+        "id": "excluded_peril",
+        "question": "Was the loss caused by an excluded peril?",
+        "description": "The proximate cause of the loss is a peril excluded under the policy (flood, war, wilful act of the insured)."
+      },
+      {
+        "id": "loss_exceeds_deductible",
+        "question": "Does the loss amount exceed the deductible?",
+        "description": "The assessed loss amount is greater than the policy deductible."
+      },
+      {
+        "id": "notice_within_30_days",
+        "question": "Was the claim notified within 30 days of the loss?",
+        "description": "The insured gave notice of the claim to the insurer within thirty days of the date of loss."
+      },
+      {
+        "id": "documentation_complete",
+        "question": "Has the insured provided complete supporting documentation?",
+        "description": "Proof of loss, ownership, and valuation documents have all been provided as required by the policy."
+      }
+    ],
+    "outcomes": [
+      {
+        "id": "DENIED",
+        "label": "Claim denied",
+        "description": "No amount is payable under the policy."
+      },
+      {
+        "id": "BELOW_DEDUCTIBLE",
+        "label": "Below deductible",
+        "description": "The claim is valid but no payment is due because the loss does not exceed the deductible."
+      },
+      {
+        "id": "FULL_PAYMENT",
+        "label": "Full payment",
+        "description": "The insurer pays the assessed loss less the deductible."
+      },
+      {
+        "id": "REDUCED_PAYMENT",
+        "label": "Reduced payment",
+        "description": "The insurer pays the assessed loss less the deductible, reduced by the late-notice/incomplete-documentation adjustment of 15%."
+      }
+    ]
+  },
+  "entry": "n1",
+  "nodes": [
+    { "id": "n1", "type": "decision", "atom": "policy_in_force",         "true": "n2",        "false": "o_denied" },
+    { "id": "n2", "type": "decision", "atom": "excluded_peril",          "true": "o_denied",  "false": "n3" },
+    { "id": "n3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "n4",        "false": "o_below" },
+    { "id": "n4", "type": "decision", "atom": "notice_within_30_days",   "true": "n5",        "false": "o_reduced" },
+    { "id": "n5", "type": "decision", "atom": "documentation_complete",  "true": "o_full",    "false": "o_reduced" },
+    { "id": "o_denied",  "type": "outcome", "outcome": "DENIED" },
+    { "id": "o_below",   "type": "outcome", "outcome": "BELOW_DEDUCTIBLE" },
+    { "id": "o_full",    "type": "outcome", "outcome": "FULL_PAYMENT" },
+    { "id": "o_reduced", "type": "outcome", "outcome": "REDUCED_PAYMENT" }
+  ]
+}

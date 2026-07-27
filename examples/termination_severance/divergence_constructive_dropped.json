@@ -1,0 +1,49 @@
+{
+  "document": "clause_divergent_constructive_dropped.md",
+  "reference_flow": "flow.json",
+  "planted_flaw": {
+    "clause": "7.3",
+    "kind": "node_splice",
+    "summary": "The constructive-dismissal carve-out is missing: the reference flow treats a resignation in response to the employer's fundamental breach as a termination by the employer, with severance payable under the ordinary provisions; the drafted clause treats every resignation alike and pays nothing."
+  },
+  "expected_extracted_flow": {
+    "entry": "n1",
+    "nodes": [
+      { "id": "n1",  "type": "decision", "atom": "terminated_for_cause",         "true": "n2",         "false": "n4" },
+      { "id": "n2",  "type": "decision", "atom": "gross_misconduct",             "true": "o_none",     "false": "n3" },
+      { "id": "n3",  "type": "decision", "atom": "served_5_years",               "true": "o_statutory","false": "o_none" },
+      { "id": "n4",  "type": "decision", "atom": "voluntary_resignation",        "true": "o_none",     "false": "n6" },
+      { "id": "n6",  "type": "decision", "atom": "served_12_months",             "true": "n7",         "false": "o_statutory" },
+      { "id": "n7",  "type": "decision", "atom": "redundancy",                   "true": "n8",         "false": "n10" },
+      { "id": "n8",  "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9" },
+      { "id": "n9",  "type": "decision", "atom": "served_5_years",               "true": "o_premium",  "false": "o_enhanced" },
+      { "id": "n10", "type": "decision", "atom": "written_notice_given",         "true": "n11",        "false": "o_enhanced" },
+      { "id": "n11", "type": "decision", "atom": "served_5_years",               "true": "o_enhanced", "false": "o_standard" },
+      { "id": "o_none",      "type": "outcome", "outcome": "NO_SEVERANCE" },
+      { "id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM" },
+      { "id": "o_standard",  "type": "outcome", "outcome": "STANDARD_SEVERANCE" },
+      { "id": "o_enhanced",  "type": "outcome", "outcome": "ENHANCED_SEVERANCE" },
+      { "id": "o_premium",   "type": "outcome", "outcome": "PREMIUM_REDUNDANCY" }
+    ]
+  },
+  "expected_verdict": "DIVERGENT",
+  "canonical_counterexample": {
+    "assignment": {
+      "terminated_for_cause": false,
+      "gross_misconduct": false,
+      "voluntary_resignation": true,
+      "constructive_dismissal": true,
+      "served_12_months": true,
+      "served_5_years": true,
+      "redundancy": false,
+      "suitable_alternative_offered": false,
+      "written_notice_given": true
+    },
+    "reference_outcome": "ENHANCED_SEVERANCE",
+    "document_outcome": "NO_SEVERANCE",
+    "narrative": "An employee with six years of service resigns in direct response to the employer's fundamental breach of the agreement — a constructive dismissal. The reference policy treats this as a termination by the employer and pays enhanced severance; the drafted contract treats every resignation alike and pays nothing."
+  },
+  "diverging_assignment_count": 6,
+  "valid_assignments": 42,
+  "total_assignments": 512
+}

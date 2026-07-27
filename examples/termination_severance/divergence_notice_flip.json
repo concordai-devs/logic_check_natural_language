@@ -1,0 +1,50 @@
+{
+  "document": "clause_divergent_notice_flip.md",
+  "reference_flow": "flow.json",
+  "planted_flaw": {
+    "clause": "7.6",
+    "kind": "branch_polarity_flip",
+    "summary": "The notice condition is drafted the wrong way round: the reference flow pays enhanced severance unconditionally when the employer FAILED to give written notice and applies the five-year tenure test when notice was given; the drafted clause does the opposite."
+  },
+  "expected_extracted_flow": {
+    "entry": "n1",
+    "nodes": [
+      { "id": "n1",  "type": "decision", "atom": "terminated_for_cause",         "true": "n2",         "false": "n4" },
+      { "id": "n2",  "type": "decision", "atom": "gross_misconduct",             "true": "o_none",     "false": "n3" },
+      { "id": "n3",  "type": "decision", "atom": "served_5_years",               "true": "o_statutory","false": "o_none" },
+      { "id": "n4",  "type": "decision", "atom": "voluntary_resignation",        "true": "n5",         "false": "n6" },
+      { "id": "n5",  "type": "decision", "atom": "constructive_dismissal",       "true": "n6",         "false": "o_none" },
+      { "id": "n6",  "type": "decision", "atom": "served_12_months",             "true": "n7",         "false": "o_statutory" },
+      { "id": "n7",  "type": "decision", "atom": "redundancy",                   "true": "n8",         "false": "n10" },
+      { "id": "n8",  "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9" },
+      { "id": "n9",  "type": "decision", "atom": "served_5_years",               "true": "o_premium",  "false": "o_enhanced" },
+      { "id": "n10", "type": "decision", "atom": "written_notice_given",         "true": "o_enhanced", "false": "n11" },
+      { "id": "n11", "type": "decision", "atom": "served_5_years",               "true": "o_enhanced", "false": "o_standard" },
+      { "id": "o_none",      "type": "outcome", "outcome": "NO_SEVERANCE" },
+      { "id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM" },
+      { "id": "o_standard",  "type": "outcome", "outcome": "STANDARD_SEVERANCE" },
+      { "id": "o_enhanced",  "type": "outcome", "outcome": "ENHANCED_SEVERANCE" },
+      { "id": "o_premium",   "type": "outcome", "outcome": "PREMIUM_REDUNDANCY" }
+    ]
+  },
+  "expected_verdict": "DIVERGENT",
+  "canonical_counterexample": {
+    "assignment": {
+      "terminated_for_cause": false,
+      "gross_misconduct": false,
+      "voluntary_resignation": false,
+      "constructive_dismissal": false,
+      "served_12_months": true,
+      "served_5_years": false,
+      "redundancy": false,
+      "suitable_alternative_offered": false,
+      "written_notice_given": false
+    },
+    "reference_outcome": "ENHANCED_SEVERANCE",
+    "document_outcome": "STANDARD_SEVERANCE",
+    "narrative": "An employee with three years of service is dismissed without cause and without written notice, for a reason other than redundancy. The reference policy compensates the employer's failure to give written notice with enhanced severance regardless of tenure; the drafted contract pays only standard severance in exactly that case."
+  },
+  "diverging_assignment_count": 4,
+  "valid_assignments": 42,
+  "total_assignments": 512
+}

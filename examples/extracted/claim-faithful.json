@@ -1,0 +1,22 @@
+{
+  "case": "claim-faithful",
+  "source_document": "claim_eligibility/clause_faithful.md",
+  "ontology_from": "claim_eligibility/flow.json",
+  "extraction_method": "chat-session extraction (Claude Fable 5), offline — flow read directly from the clause text, node ids and ordering follow the document's own section order",
+  "extracted_at": "2026-07-23",
+  "notes": "4.1 bars liability for policy-not-in-force and excluded-peril losses; 4.2 admits but pays nothing below the deductible; 4.3(a) pays in full on timely notice plus complete documentation; 4.3(b) applies the 15% reduction for late notice OR (timely notice but) incomplete documentation.",
+  "flow": {
+    "entry": "e1",
+    "nodes": [
+      { "id": "e1", "type": "decision", "atom": "policy_in_force",         "true": "e2",     "false": "x_den" },
+      { "id": "e2", "type": "decision", "atom": "excluded_peril",          "true": "x_den",  "false": "e3" },
+      { "id": "e3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "e4",     "false": "x_below" },
+      { "id": "e4", "type": "decision", "atom": "notice_within_30_days",   "true": "e5",     "false": "x_red" },
+      { "id": "e5", "type": "decision", "atom": "documentation_complete",  "true": "x_full", "false": "x_red" },
+      { "id": "x_den",   "type": "outcome", "outcome": "DENIED" },
+      { "id": "x_below", "type": "outcome", "outcome": "BELOW_DEDUCTIBLE" },
+      { "id": "x_full",  "type": "outcome", "outcome": "FULL_PAYMENT" },
+      { "id": "x_red",   "type": "outcome", "outcome": "REDUCED_PAYMENT" }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "description": "Offline case library: synthetic legal clauses generated (offline, LLM-authored) from reference logic flows. Faithful cases implement the reference flow exactly; divergent cases carry one planted flaw with machine-verifiable ground truth. Each case also carries an offline chat-session extraction (extracted/) — the stage-3 output that verification runs against.",
+  "cases": [
+    {
+      "id": "severance-faithful",
+      "domain": "termination_severance",
+      "flow": "termination_severance/flow.json",
+      "document": "termination_severance/clause_faithful.md",
+      "extracted": "extracted/severance-faithful.json",
+      "expected_verdict": "EQUIVALENT",
+      "ground_truth": null
+    },
+    {
+      "id": "severance-statutory-floor-dropped",
+      "domain": "termination_severance",
+      "flow": "termination_severance/flow.json",
+      "document": "termination_severance/clause_divergent.md",
+      "extracted": "extracted/severance-statutory-floor-dropped.json",
+      "expected_verdict": "DIVERGENT",
+      "ground_truth": "termination_severance/divergence.json"
+    },
+    {
+      "id": "severance-notice-branch-flipped",
+      "domain": "termination_severance",
+      "flow": "termination_severance/flow.json",
+      "document": "termination_severance/clause_divergent_notice_flip.md",
+      "extracted": "extracted/severance-notice-branch-flipped.json",
+      "expected_verdict": "DIVERGENT",
+      "ground_truth": "termination_severance/divergence_notice_flip.json"
+    },
+    {
+      "id": "severance-constructive-dismissal-dropped",
+      "domain": "termination_severance",
+      "flow": "termination_severance/flow.json",
+      "document": "termination_severance/clause_divergent_constructive_dropped.md",
+      "extracted": "extracted/severance-constructive-dismissal-dropped.json",
+      "expected_verdict": "DIVERGENT",
+      "ground_truth": "termination_severance/divergence_constructive_dropped.json"
+    },
+    {
+      "id": "claim-faithful",
+      "domain": "claim_eligibility",
+      "flow": "claim_eligibility/flow.json",
+      "document": "claim_eligibility/clause_faithful.md",
+      "extracted": "extracted/claim-faithful.json",
+      "expected_verdict": "EQUIVALENT",
+      "ground_truth": null
+    },
+    {
+      "id": "claim-late-notice-escalated",
+      "domain": "claim_eligibility",
+      "flow": "claim_eligibility/flow.json",
+      "document": "claim_eligibility/clause_divergent.md",
+      "extracted": "extracted/claim-late-notice-escalated.json",
+      "expected_verdict": "DIVERGENT",
+      "ground_truth": "claim_eligibility/divergence.json"
+    }
+  ]
+}

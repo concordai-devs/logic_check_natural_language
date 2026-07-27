@@ -1,0 +1,38 @@
+{
+  "document": "clause_divergent.md",
+  "reference_flow": "flow.json",
+  "planted_flaw": {
+    "clause": "4.3",
+    "kind": "penalty_escalated_to_denial",
+    "summary": "Late notification is drafted as a ground for full denial of the claim; the reference flow only applies a 15% reduced-payment adjustment for late notice."
+  },
+  "expected_extracted_flow": {
+    "entry": "n1",
+    "nodes": [
+      { "id": "n1", "type": "decision", "atom": "policy_in_force",         "true": "n2",       "false": "o_denied" },
+      { "id": "n2", "type": "decision", "atom": "excluded_peril",          "true": "o_denied", "false": "n3" },
+      { "id": "n3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "n4",       "false": "o_below" },
+      { "id": "n4", "type": "decision", "atom": "notice_within_30_days",   "true": "n5",       "false": "o_denied" },
+      { "id": "n5", "type": "decision", "atom": "documentation_complete",  "true": "o_full",   "false": "o_reduced" },
+      { "id": "o_denied",  "type": "outcome", "outcome": "DENIED" },
+      { "id": "o_below",   "type": "outcome", "outcome": "BELOW_DEDUCTIBLE" },
+      { "id": "o_full",    "type": "outcome", "outcome": "FULL_PAYMENT" },
+      { "id": "o_reduced", "type": "outcome", "outcome": "REDUCED_PAYMENT" }
+    ]
+  },
+  "expected_verdict": "DIVERGENT",
+  "canonical_counterexample": {
+    "assignment": {
+      "policy_in_force": true,
+      "excluded_peril": false,
+      "loss_exceeds_deductible": true,
+      "notice_within_30_days": false,
+      "documentation_complete": true
+    },
+    "reference_outcome": "REDUCED_PAYMENT",
+    "document_outcome": "DENIED",
+    "narrative": "A policyholder with a valid, in-force policy suffers a covered loss well above the deductible and submits complete documentation, but notifies the insurer 35 days after the loss. The agreed policy terms pay the claim reduced by 15%; the drafted wording denies the claim entirely."
+  },
+  "diverging_assignment_count": 2,
+  "total_assignments": 32
+}

@@ -1,0 +1,109 @@
+{
+  "id": "termination-severance-v2",
+  "title": "Severance entitlement on termination of employment",
+  "description": "Determines an employee's severance entitlement when employment ends. Reference logic agreed between the parties (e.g. from a term sheet or HR policy); drafted contract clauses must implement exactly this logic. v2: branching structure with cause subtypes, constructive dismissal, tenure tiers, and redundancy alternatives, plus ontology constraints restricting evaluation to legally possible worlds.",
+  "ontology": {
+    "atoms": [
+      {
+        "id": "terminated_for_cause",
+        "question": "Was the employment terminated by the employer for Cause?",
+        "description": "The employer ended the employment for Cause (gross misconduct, persistent underperformance after warnings, or material breach of duties)."
+      },
+      {
+        "id": "gross_misconduct",
+        "question": "Did the Cause consist of gross misconduct?",
+        "description": "The Cause relied on was gross misconduct (theft, fraud, violence, or conduct of similar gravity), as opposed to ordinary Cause such as persistent underperformance."
+      },
+      {
+        "id": "voluntary_resignation",
+        "question": "Did the employee resign?",
+        "description": "The employment ended by the employee's own resignation."
+      },
+      {
+        "id": "constructive_dismissal",
+        "question": "Was the resignation a constructive dismissal?",
+        "description": "The employee resigned in direct response to a fundamental breach of the employment agreement by the employer."
+      },
+      {
+        "id": "served_12_months",
+        "question": "Had the employee completed 12 months of continuous service at the termination date?",
+        "description": "At the Termination Date, the employee had at least twelve months of continuous service."
+      },
+      {
+        "id": "served_5_years",
+        "question": "Had the employee completed 5 years of continuous service at the termination date?",
+        "description": "At the Termination Date, the employee had at least five years of continuous service."
+      },
+      {
+        "id": "redundancy",
+        "question": "Was the termination by reason of redundancy?",
+        "description": "The role was eliminated or the employer's requirement for the work ceased or diminished."
+      },
+      {
+        "id": "suitable_alternative_offered",
+        "question": "Was suitable alternative employment offered?",
+        "description": "In the redundancy process, the employer offered the employee a suitable alternative role on terms no less favourable overall."
+      },
+      {
+        "id": "written_notice_given",
+        "question": "Did the employer give notice of termination in writing?",
+        "description": "The employer provided written notice of termination as required by the agreement."
+      }
+    ],
+    "constraints": [
+      { "type": "implies",  "if": "gross_misconduct",             "then": "terminated_for_cause" },
+      { "type": "implies",  "if": "constructive_dismissal",       "then": "voluntary_resignation" },
+      { "type": "implies",  "if": "served_5_years",               "then": "served_12_months" },
+      { "type": "implies",  "if": "suitable_alternative_offered", "then": "redundancy" },
+      { "type": "excludes", "a": "terminated_for_cause",  "b": "voluntary_resignation" },
+      { "type": "excludes", "a": "terminated_for_cause",  "b": "redundancy" },
+      { "type": "excludes", "a": "voluntary_resignation", "b": "redundancy" }
+    ],
+    "outcomes": [
+      {
+        "id": "NO_SEVERANCE",
+        "label": "No severance",
+        "description": "The employee is not entitled to any severance payment."
+      },
+      {
+        "id": "STATUTORY_MINIMUM",
+        "label": "Statutory minimum only",
+        "description": "The employee is entitled only to the minimum severance (if any) required by applicable law."
+      },
+      {
+        "id": "STANDARD_SEVERANCE",
+        "label": "Standard severance",
+        "description": "One month's base salary per completed year of service."
+      },
+      {
+        "id": "ENHANCED_SEVERANCE",
+        "label": "Enhanced severance",
+        "description": "Standard severance plus a supplement of three months' base salary."
+      },
+      {
+        "id": "PREMIUM_REDUNDANCY",
+        "label": "Premium redundancy package",
+        "description": "Standard severance plus a supplement of six months' base salary, for long-serving employees made redundant with no suitable alternative role."
+      }
+    ]
+  },
+  "entry": "n1",
+  "nodes": [
+    { "id": "n1",  "type": "decision", "atom": "terminated_for_cause",         "true": "n2",         "false": "n4" },
+    { "id": "n2",  "type": "decision", "atom": "gross_misconduct",             "true": "o_none",     "false": "n3" },
+    { "id": "n3",  "type": "decision", "atom": "served_5_years",               "true": "o_statutory","false": "o_none" },
+    { "id": "n4",  "type": "decision", "atom": "voluntary_resignation",        "true": "n5",         "false": "n6" },
+    { "id": "n5",  "type": "decision", "atom": "constructive_dismissal",       "true": "n6",         "false": "o_none" },
+    { "id": "n6",  "type": "decision", "atom": "served_12_months",             "true": "n7",         "false": "o_statutory" },
+    { "id": "n7",  "type": "decision", "atom": "redundancy",                   "true": "n8",         "false": "n10" },
+    { "id": "n8",  "type": "decision", "atom": "suitable_alternative_offered", "true": "o_standard", "false": "n9" },
+    { "id": "n9",  "type": "decision", "atom": "served_5_years",               "true": "o_premium",  "false": "o_enhanced" },
+    { "id": "n10", "type": "decision", "atom": "written_notice_given",         "true": "n11",        "false": "o_enhanced" },
+    { "id": "n11", "type": "decision", "atom": "served_5_years",               "true": "o_enhanced", "false": "o_standard" },
+    { "id": "o_none",      "type": "outcome", "outcome": "NO_SEVERANCE" },
+    { "id": "o_statutory", "type": "outcome", "outcome": "STATUTORY_MINIMUM" },
+    { "id": "o_standard",  "type": "outcome", "outcome": "STANDARD_SEVERANCE" },
+    { "id": "o_enhanced",  "type": "outcome", "outcome": "ENHANCED_SEVERANCE" },
+    { "id": "o_premium",   "type": "outcome", "outcome": "PREMIUM_REDUNDANCY" }
+  ]
+}

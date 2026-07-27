@@ -1,0 +1,22 @@
+{
+  "case": "claim-late-notice-escalated",
+  "source_document": "claim_eligibility/clause_divergent.md",
+  "ontology_from": "claim_eligibility/flow.json",
+  "extraction_method": "chat-session extraction (Claude Fable 5), offline — flow read directly from the clause text, node ids and ordering follow the document's own section order",
+  "extracted_at": "2026-07-23",
+  "notes": "4.3 reads: 'Any claim not notified within such period shall be denied and no amount shall be payable in respect of it' — late notice is a full denial, not the reference's 15% reduction. Following the document's own order (4.1 cover, 4.2 deductible, 4.3 notification, 4.4 payment), the notice test sits after the deductible test; 4.4 then splits full vs reduced on documentation only.",
+  "flow": {
+    "entry": "e1",
+    "nodes": [
+      { "id": "e1", "type": "decision", "atom": "policy_in_force",         "true": "e2",     "false": "x_den" },
+      { "id": "e2", "type": "decision", "atom": "excluded_peril",          "true": "x_den",  "false": "e3" },
+      { "id": "e3", "type": "decision", "atom": "loss_exceeds_deductible", "true": "e4",     "false": "x_below" },
+      { "id": "e4", "type": "decision", "atom": "notice_within_30_days",   "true": "e5",     "false": "x_den" },
+      { "id": "e5", "type": "decision", "atom": "documentation_complete",  "true": "x_full", "false": "x_red" },
+      { "id": "x_den",   "type": "outcome", "outcome": "DENIED" },
+      { "id": "x_below", "type": "outcome", "outcome": "BELOW_DEDUCTIBLE" },
+      { "id": "x_full",  "type": "outcome", "outcome": "FULL_PAYMENT" },
+      { "id": "x_red",   "type": "outcome", "outcome": "REDUCED_PAYMENT" }
+    ]
+  }
+}
