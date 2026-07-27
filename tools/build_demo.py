@@ -78,7 +78,7 @@ def lean_theorems(cid):
 
 
 def main():
-    out_path = Path(sys.argv[1])
+    out_path = Path(next(a for a in sys.argv[1:] if not a.startswith("--")))
     index = load("index.json")
     verdicts = {v["case"]: v for v in load("verdicts.json")["verdicts"]}
     cases = []
@@ -127,6 +127,8 @@ def main():
             "extFlow": {"entry": ext["entry"], "nodes": ext["nodes"]},
             "groundTruth": gt,
             "lean": lean_theorems(cid),
+            "leanPath": f"lean/cases/{camel(cid)}.lean",
+            "leanFull": (REPO / "lean" / "cases" / f"{camel(cid)}.lean").read_text().strip(),
         })
 
     data = {"shortLabels": SHORT_LABELS, "outcomes": OUTCOMES, "cases": cases}
@@ -134,7 +136,21 @@ def main():
 
     template = (REPO / "tools" / "demo_template.html").read_text()
     assert "/*__DATA__*/" in template
-    out_path.write_text(template.replace("/*__DATA__*/", blob))
+    page = template.replace("/*__DATA__*/", blob)
+
+    # --bare: emit page content only (for hosts that add the document shell,
+    # e.g. claude.ai artifacts). Default: full standalone HTML document.
+    if "--bare" not in sys.argv:
+        page = (
+            "<!doctype html>\n"
+            "<!-- GENERATED FILE - do not edit. "
+            "Edit tools/demo_template.html (or examples/) and run: "
+            "python3 tools/build_demo.py demo/index.html -->\n"
+            '<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            "</head>\n<body>\n" + page + "\n</body>\n</html>\n"
+        )
+    out_path.write_text(page)
     print(f"wrote {out_path} ({out_path.stat().st_size // 1024} KB, {len(cases)} cases, data re-verified)")
 
 

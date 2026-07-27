@@ -77,7 +77,9 @@ def emit_valid(constraints):
             terms.append(f"(!a.{c['if']} || a.{c['then']})")
         else:  # excludes
             terms.append(f"!(a.{c['a']} && a.{c['b']})")
-    body = "\n  && ".join(terms) if terms else "true"
+    if not terms:
+        return "def valid (_ : Assignment) : Bool :=\n  true"
+    body = "\n  && ".join(terms)
     return f"def valid (a : Assignment) : Bool :=\n  {body}"
 
 

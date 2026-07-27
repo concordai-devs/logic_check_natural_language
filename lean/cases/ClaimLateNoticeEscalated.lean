@@ -27,7 +27,7 @@ inductive Outcome where
   | REDUCED_PAYMENT
 deriving Repr, DecidableEq, BEq
 
-def valid (a : Assignment) : Bool :=
+def valid (_ : Assignment) : Bool :=
   true
 
 -- Reference flow (claim-eligibility-v1)

@@ -139,6 +139,12 @@ reveal the flawed clause highlighted in the text, the counterexample scenarios,
 and the kernel-checked Lean theorems; the scenario explorer lets you toggle the
 facts of a case and trace both logic paths live.
 
+For the technically curious, a **proof-object appendix** at the bottom of the
+page unlocks per certified draft: the complete Lean 4 source of the proof file,
+a compiler transcript (byte-identical to what `lean` prints for the committed
+file, reproduced live by the same enumeration), and the raw exhaustive
+enumeration table — every legally possible world with both verdicts.
+
 ## The case library
 
 | Case | Domain | Verdict | Planted flaw |

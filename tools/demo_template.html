@@ -2,639 +2,212 @@
 <style>
   :root {
     color-scheme: light;
-    --paper: #ffffff;
-    --surface: #ffffff;
-    --ink: #000000;
-    --muted: #555555;
-    --accent: #006400;
-    --accent-soft: #e9f2e9;
-    --diverge: #990000;
-    --diverge-soft: #f6eaea;
-    --hairline: #aaaaaa;
-    --code-bg: #f3f3f3;
-    --mid: #7a5c00;
-    --mid-soft: #f5efdb;
+    --paper: #ffffff; --surface: #ffffff; --ink: #000000; --muted: #555555;
+    --accent: #006400; --accent-soft: #e9f2e9; --diverge: #990000; --diverge-soft: #f6eaea;
+    --hairline: #aaaaaa; --box: #000000; --strong: #14516b; --code-bg: #f3f3f3; --mid: #7a5c00; --mid-soft: #f5efdb;
   }
 
-  * {
-    box-sizing: border-box;
-  }
-
+  * { box-sizing: border-box; }
   body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Times New Roman", Times, serif;
-    font-size: 17px;
-    line-height: 1.5;
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 17px; line-height: 1.5;
   }
-
-  .wrap {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 1.25rem;
-  }
-
-  .prose {
-    max-width: 78ch;
-  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 1.25rem; }
+  .prose { max-width: 72ch; }
 
   .eyebrow {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
   }
+  header.hero { padding: 2.5rem 0 2rem; border-bottom: 2px solid var(--ink); }
+  header.hero h1 { font-size: 2.1rem; line-height: 1.2; margin: 0.4rem 0 0.7rem; font-weight: bold; max-width: 44ch; text-wrap: balance; }
+  header.hero .standfirst { font-size: 1.05rem; max-width: 72ch; margin: 0; }
+  header.hero .thesis { margin-top: 1rem; font-style: italic; max-width: 72ch; }
 
-  header.hero {
-    padding: 2.5rem 0 2rem;
-    border-bottom: 2px solid var(--ink);
-  }
-
-  header.hero h1 {
-    font-size: 2.1rem;
-    line-height: 1.2;
-    margin: 0.4rem 0 0.7rem;
-    font-weight: bold;
-  }
-
-  header.hero .standfirst {
-    font-size: 1.05rem;
-    max-width: 70ch;
-    margin: 0;
-  }
-
-  header.hero .thesis {
-    margin-top: 1rem;
-    font-style: italic;
-  }
-
-  h2 {
-    font-size: 1.4rem;
-    margin: 0 0 1rem;
-  }
-
+  h2 { font-size: 1.4rem; margin: 0 0 1rem; max-width: 60ch; text-wrap: balance; }
   h2 .no {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 0.2rem;
-    text-transform: uppercase;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--muted); display: block; margin-bottom: 0.2rem; text-transform: uppercase;
   }
+  h3 { font-size: 1.1rem; margin: 0 0 0.5rem; }
+  p { margin: 0 0 0.9rem; }
+  section.band { padding: 2rem 0; border-bottom: 1px solid var(--hairline); }
+  section.band > p { max-width: 72ch; }
 
-  h3 {
-    font-size: 1.1rem;
-    margin: 0 0 0.5rem;
-  }
-
-  p {
-    margin: 0 0 0.9rem;
-  }
-
-  section.band {
-    padding: 2rem 0;
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  code,
-  .mono {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.88em;
-  }
-
-  code {
-    background: var(--code-bg);
-    padding: 0 0.25em;
-  }
-
+  code, .mono { font-family: "Courier New", Courier, monospace; font-size: 0.88em; }
+  code { background: var(--code-bg); padding: 0 0.25em; }
   pre {
-    background: var(--code-bg);
-    border: 1px solid var(--hairline);
-    padding: 0.8rem 1rem;
-    overflow-x: auto;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    margin: 0.75rem 0;
+    background: var(--code-bg); border: 1px solid var(--box);
+    padding: 0.8rem 1rem; overflow-x: auto; font-size: 0.82rem; line-height: 1.45; margin: 0.75rem 0;
   }
-
-  pre code {
-    background: none;
-    padding: 0;
-    font-size: inherit;
-  }
+  pre code { background: none; padding: 0; font-size: inherit; }
 
   /* ---- steps ---- */
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-top: 1.25rem;
-  }
-
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
   .step {
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    padding: 1rem 1.1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
+    background: var(--surface); border: 1px solid var(--box); padding: 1rem 1.1rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
   }
-
-  .step .k {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .step p {
-    font-size: 0.95rem;
-    margin: 0;
-  }
-
-  .step .fine {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
+  .step .k { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .step p { font-size: 0.95rem; margin: 0; }
+  .step .fine { font-size: 0.85rem; color: var(--muted); }
 
   /* ---- case picker ---- */
-  .cases {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.8rem;
-    margin: 1.25rem 0 1.75rem;
-  }
-
+  .cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.8rem; margin: 1.25rem 0 1.75rem; }
   .case-card {
-    text-align: left;
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    padding: 0.8rem 1rem;
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
+    text-align: left; background: var(--surface); border: 1px solid var(--box);
+    padding: 0.8rem 1rem; cursor: pointer; font: inherit; color: inherit;
   }
-
-  .case-card:hover {
-    border-color: var(--ink);
-  }
-
-  .case-card.active {
-    outline: 2px solid var(--ink);
-    outline-offset: -1px;
-  }
-
-  .case-card .cc-title {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .case-card .cc-meta {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .case-card:hover { background: var(--code-bg); }
+  .case-card.active { outline: 2px solid var(--ink); outline-offset: -1px; }
+  .case-card .cc-title { font-weight: bold; font-size: 1rem; margin-bottom: 0.3rem; }
+  .case-card .cc-meta { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
 
   .chip {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.1rem 0.45rem;
-    border: 1px solid;
-    text-transform: uppercase;
+    display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+    padding: 0.1rem 0.45rem; border: 1px solid; text-transform: uppercase;
   }
-
-  .chip.domain {
-    color: var(--muted);
-    border-color: var(--hairline);
-    background: var(--code-bg);
-  }
-
-  .chip.unk {
-    color: var(--muted);
-    border-style: dashed;
-    background: none;
-  }
-
-  .chip.eq {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: var(--accent-soft);
-  }
-
-  .chip.div {
-    color: var(--diverge);
-    border-color: var(--diverge);
-    background: var(--diverge-soft);
-  }
+  .chip.domain { color: var(--muted); border-color: var(--hairline); background: var(--code-bg); }
+  .chip.unk { color: var(--muted); border-style: dashed; background: none; }
+  .chip.eq  { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .chip.div { color: var(--diverge); border-color: var(--diverge); background: var(--diverge-soft); }
 
   /* ---- workbench ---- */
-  .bench {
-    display: grid;
-    grid-template-columns: minmax(340px, 5fr) minmax(420px, 7fr);
-    gap: 1.25rem;
-    align-items: start;
-  }
-
-  @media (max-width: 980px) {
-    .bench {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-  }
-
+  .bench { display: grid; grid-template-columns: minmax(340px, 5fr) minmax(420px, 7fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 980px) { .bench { grid-template-columns: 1fr; } }
+  .panel { background: var(--surface); border: 1px solid var(--box); }
   .panel-h {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0.6rem 1rem;
-    border-bottom: 1px solid var(--hairline);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--box);
+    display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
   }
-
-  .panel-b {
-    padding: 1rem 1.1rem;
-  }
+  .panel-b { padding: 1rem 1.1rem; }
 
   /* document */
-  .doc {
-    font-size: 0.92rem;
-    line-height: 1.5;
-    max-height: 560px;
-    overflow-y: auto;
-  }
-
-  .doc h4 {
-    font-size: 1.05rem;
-    margin: 0 0 0.75rem;
-  }
-
-  .doc p {
-    margin: 0 0 0.7rem;
-  }
-
-  .doc p.sub {
-    margin-left: 1.4rem;
-  }
-
-  .doc p.flawed {
-    background: var(--diverge-soft);
-    border-left: 3px solid var(--diverge);
-    padding: 0.4rem 0.6rem;
-  }
-
+  .doc { font-size: 0.92rem; line-height: 1.5; max-height: 560px; overflow-y: auto; max-width: 78ch; }
+  .doc h4 { font-size: 1.05rem; margin: 0 0 0.75rem; }
+  .doc p { margin: 0 0 0.7rem; }
+  .doc p.sub { margin-left: 1.4rem; }
+  .doc p.flawed { background: var(--diverge-soft); border-left: 3px solid var(--diverge); padding: 0.4rem 0.6rem; }
   .flaw-note {
-    font-size: 0.85rem;
-    color: var(--diverge);
-    background: var(--diverge-soft);
-    border: 1px solid var(--diverge);
-    padding: 0.5rem 0.7rem;
-    margin-bottom: 0.75rem;
+    font-size: 0.85rem; color: var(--diverge); background: var(--diverge-soft);
+    border: 1px solid var(--diverge); padding: 0.5rem 0.7rem; margin-bottom: 0.75rem;
   }
 
   /* diagrams */
-  .flows {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
+  .flows { display: grid; grid-template-columns: 1fr; gap: 1rem; }
   .flowbox .fb-h {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.35rem;
-    display: flex;
-    gap: 0.5rem;
-    align-items: baseline;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.35rem; display: flex; gap: 0.5rem; align-items: baseline;
   }
-
-  .flowbox .fb-h .src {
-    text-transform: none;
-    letter-spacing: 0;
-    font-weight: 400;
-    font-size: 0.78rem;
-  }
-
-  .flow-scroll {
-    overflow-x: auto;
-    border: 1px solid var(--hairline);
-    background: var(--surface);
-  }
-
-  svg.flow text {
-    font-family: "Times New Roman", Times, serif;
-    fill: var(--ink);
-  }
-
-  svg.flow .nd rect {
-    fill: #ffffff;
-    stroke: #000000;
-    stroke-width: 1;
-  }
-
-  svg.flow .nd text {
-    font-size: 12px;
-  }
-
-  svg.flow .oc rect {
-    stroke-width: 1;
-  }
-
-  svg.flow .oc text {
-    font-size: 10.5px;
-    font-weight: 700;
-  }
-
-  svg.flow .oc.good rect {
-    fill: var(--accent-soft);
-    stroke: var(--accent);
-  }
-
-  svg.flow .oc.good text {
-    fill: var(--accent);
-  }
-
-  svg.flow .oc.bad rect {
-    fill: var(--diverge-soft);
-    stroke: var(--diverge);
-  }
-
-  svg.flow .oc.bad text {
-    fill: var(--diverge);
-  }
-
-  svg.flow .oc.mid rect {
-    fill: var(--mid-soft);
-    stroke: var(--mid);
-  }
-
-  svg.flow .oc.mid text {
-    fill: var(--mid);
-  }
-
-  svg.flow .eg {
-    stroke: #666666;
-    stroke-width: 1;
-    fill: none;
-  }
-
-  svg.flow .eg-lbl {
-    font-size: 10px;
-    fill: #555555;
-    font-style: italic;
-  }
-
-  svg.flow .hl-a.eg,
-  svg.flow .hl-b.eg {
-    stroke-width: 2.6;
-  }
-
-  svg.flow .hl-a.eg {
-    stroke: var(--accent);
-  }
-
-  svg.flow .hl-b.eg {
-    stroke: var(--diverge);
-  }
-
-  svg.flow .nd.hl-a rect {
-    stroke: var(--accent);
-    stroke-width: 2.2;
-  }
-
-  svg.flow .nd.hl-b rect {
-    stroke: var(--diverge);
-    stroke-width: 2.2;
-  }
-
-  svg.flow .oc.hl-a rect,
-  svg.flow .oc.hl-b rect {
-    stroke-width: 2.4;
-  }
+  .flowbox .fb-h .src { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.78rem; }
+  .flow-scroll { overflow-x: auto; border: 1px solid var(--box); background: var(--surface); }
+  svg.flow text { font-family: Helvetica, Arial, sans-serif; fill: var(--ink); }
+  svg.flow .nd rect { fill: #ffffff; stroke: #000000; stroke-width: 1; }
+  svg.flow .nd text { font-size: 12px; }
+  svg.flow .oc rect { stroke-width: 1; }
+  svg.flow .oc text { font-size: 10.5px; font-weight: 700; }
+  svg.flow .oc.good rect { fill: var(--accent-soft); stroke: var(--accent); }
+  svg.flow .oc.good text { fill: var(--accent); }
+  svg.flow .oc.bad rect { fill: var(--diverge-soft); stroke: var(--diverge); }
+  svg.flow .oc.bad text { fill: var(--diverge); }
+  svg.flow .oc.mid rect { fill: var(--mid-soft); stroke: var(--mid); }
+  svg.flow .oc.mid text { fill: var(--mid); }
+  svg.flow .eg { stroke: #666666; stroke-width: 1; fill: none; }
+  svg.flow .eg-lbl { font-size: 10px; fill: #555555; font-style: italic; }
+  svg.flow .hl-a.eg, svg.flow .hl-b.eg { stroke-width: 2.6; }
+  svg.flow .hl-a.eg { stroke: var(--accent); }
+  svg.flow .hl-b.eg { stroke: var(--diverge); }
+  svg.flow .nd.hl-a rect { stroke: var(--accent); stroke-width: 2.2; }
+  svg.flow .nd.hl-b rect { stroke: var(--diverge); stroke-width: 2.2; }
+  svg.flow .oc.hl-a rect, svg.flow .oc.hl-b rect { stroke-width: 2.4; }
 
   /* buttons — native browser appearance */
-  .btn {
-    font: inherit;
-    padding: 0.15rem 0.8rem;
-    cursor: pointer;
-  }
-
-  .btn:disabled {
-    cursor: default;
-  }
+  .btn { font: inherit; padding: 0.15rem 0.8rem; cursor: pointer; }
+  .btn:disabled { cursor: default; }
 
   /* verdict */
-  .certify-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .progress {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.82rem;
-    color: var(--muted);
-  }
-
-  .banner {
-    border: 1px solid;
-    padding: 0.7rem 1rem;
-    margin-top: 0.9rem;
-    display: none;
-  }
-
-  .banner.show {
-    display: block;
-  }
-
-  .banner.eq {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .banner.div {
-    background: var(--diverge-soft);
-    border-color: var(--diverge);
-    color: var(--diverge);
-  }
-
-  .banner .big {
-    font-size: 1rem;
-    font-weight: bold;
-  }
-
-  .banner .sub {
-    font-size: 0.88rem;
-    margin-top: 0.15rem;
-  }
+  .certify-bar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .progress { font-family: "Courier New", Courier, monospace; font-size: 0.82rem; color: var(--muted); }
+  .banner { border: 1px solid; padding: 0.7rem 1rem; margin-top: 0.9rem; display: none; }
+  .banner.show { display: block; }
+  .banner.eq  { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .banner.div { background: var(--diverge-soft); border-color: var(--diverge); color: var(--diverge); }
+  .banner .big { font-size: 1rem; font-weight: bold; }
+  .banner .sub { font-size: 0.88rem; margin-top: 0.15rem; }
 
   /* counterexample */
-  .cx-narr {
-    font-style: italic;
-    margin: 0.6rem 0 0.8rem;
-  }
-
-  .vs {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .vs>div {
-    flex: 1 1 200px;
-    border: 1px solid;
-    padding: 0.55rem 0.8rem;
-    font-size: 0.88rem;
-  }
-
-  .vs .ref {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .vs .docx {
-    background: var(--diverge-soft);
-    border-color: var(--diverge);
-    color: var(--diverge);
-  }
-
-  .vs b {
-    display: block;
-    font-size: 0.68rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.2rem;
-  }
-
-  .cx-list {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    margin-top: 0.7rem;
-  }
-
+  .cx-narr { font-style: italic; margin: 0.6rem 0 0.8rem; }
+  .vs { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .vs > div { flex: 1 1 200px; border: 1px solid; padding: 0.55rem 0.8rem; font-size: 0.88rem; }
+  .vs .ref { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .vs .docx { background: var(--diverge-soft); border-color: var(--diverge); color: var(--diverge); }
+  .vs b { display: block; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.2rem; }
+  .cx-list { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.7rem; }
   .cx-chip {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.78rem;
-    background: var(--code-bg);
-    border: 1px solid var(--hairline);
-    padding: 0.2rem 0.5rem;
-    cursor: pointer;
-    color: var(--ink);
+    font-family: "Courier New", Courier, monospace; font-size: 0.78rem;
+    background: var(--code-bg); border: 1px solid var(--box);
+    padding: 0.2rem 0.5rem; cursor: pointer; color: var(--ink);
   }
-
-  .cx-chip:hover {
-    border-color: var(--diverge);
-  }
+  .cx-chip:hover { border-color: var(--diverge); }
 
   /* explorer */
-  .toggles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-bottom: 0.8rem;
-  }
-
+  .toggles { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.8rem; }
   .tg {
-    font: inherit;
-    font-size: 0.85rem;
-    border: 1px solid var(--hairline);
-    background: var(--surface);
-    color: var(--ink);
-    padding: 0.15rem 0.6rem;
-    cursor: pointer;
+    font: inherit; font-size: 0.85rem; border: 1px solid var(--box);
+    background: var(--surface); color: var(--ink); padding: 0.15rem 0.6rem; cursor: pointer;
   }
+  .tg.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .validity { font-size: 0.85rem; margin-bottom: 0.7rem; }
+  .validity.ok { color: var(--accent); }
+  .validity.bad { color: var(--mid); }
+  .outcomes { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: stretch; }
 
-  .tg.on {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-  }
-
-  .validity {
-    font-size: 0.85rem;
-    margin-bottom: 0.7rem;
-  }
-
-  .validity.ok {
-    color: var(--accent);
-  }
-
-  .validity.bad {
-    color: var(--mid);
-  }
-
-  .outcomes {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    align-items: stretch;
-  }
+  /* ---- appendix: the proof object ---- */
+  .apx-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.25rem; }
+  p.fine { font-size: 0.85rem; color: var(--muted); max-width: 78ch; }
+  pre.lean-src { max-height: 540px; overflow: auto; margin: 0; }
+  .lean-src .lk { font-weight: bold; }
+  .lean-src .lc { color: var(--muted); font-style: italic; }
+  .lean-src .ls { color: var(--diverge); }
+  pre.term { background: #000000; color: #d8d8d8; border: 1px solid var(--box); margin: 0; max-height: 420px; overflow: auto; }
+  .term .cmd { color: #ffffff; font-weight: bold; }
+  .term .cmt { color: #888888; }
+  .wt-scroll { overflow: auto; max-height: 480px; border: 1px solid var(--box); }
+  table.wt { border-collapse: collapse; font-family: "Courier New", Courier, monospace; font-size: 0.78rem; }
+  table.wt th, table.wt td { border: 1px solid #dddddd; padding: 0.12rem 0.45rem; text-align: center; white-space: nowrap; }
+  table.wt thead th { position: sticky; top: 0; background: var(--code-bg); z-index: 1; }
+  table.wt th.rot { vertical-align: bottom; padding: 0.4rem 0.2rem; }
+  table.wt th.rot span { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; font-weight: normal; }
+  table.wt td.oc-cell { text-align: left; font-size: 0.72rem; }
+  table.wt tr.dv { background: var(--diverge-soft); color: var(--diverge); font-weight: bold; }
 
   .lean-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 0.05rem 0.4rem;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent); padding: 0.05rem 0.4rem;
   }
 
-  footer {
-    padding: 2rem 0 3.5rem;
-    color: var(--muted);
-    font-size: 0.92rem;
-  }
+  footer { padding: 2rem 0 3.5rem; color: var(--muted); font-size: 0.92rem; }
+  footer .prose { max-width: 72ch; }
+  a { color: #0000cc; }
+  /* bold text carries the heading color (semantic green/red bolds keep theirs) */
+  strong, h1, h2, h2 .no, h3, .doc h4, .eyebrow, .step .k, .cc-title, .panel-h,
+  .flowbox .fb-h, table.wt thead th, .lean-src .lk { color: var(--strong); }
+  .flowbox .fb-h .src { color: var(--muted); }
 
-  footer .prose {
-    max-width: 82ch;
-  }
+  :focus-visible { outline: 2px solid #000; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
-  a {
-    color: #0000cc;
-  }
-
-  :focus-visible {
-    outline: 2px solid #000;
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      transition: none !important;
-    }
-  }
 </style>
 
 <div class="wrap">
   <header class="hero">
     <div class="eyebrow">Concord AI · Legal Document Verification MVP · Interactive Demo</div>
-    <h1>Certify a clause against the logic it was meant to implement.</h1>
+    <h1>Formal certification of a legal clause against reference legal logic</h1>
     <p class="standfirst">Below are six synthetic contract sections generated from two agreed decision
-      policies — some faithful, some carrying a single planted drafting flaw. Pick one, inspect the logic,
-      and run the certification: every legally possible scenario is checked, and any divergence is returned
+      policies — some faithful, some carrying a single planted drafting flaw. The demo inspects the logic
+      and runs the certification: every legally possible scenario is checked, and any divergence is returned
       as a concrete case where the contract and the policy disagree.</p>
   </header>
 
@@ -643,45 +216,36 @@
     <div class="steps">
       <div class="step">
         <div class="k">1 · Reference logic</div>
-        <p>Each legal domain gets a <strong>fixed ontology</strong> — boolean predicates ("dismissed for cause?",
-          "5 years served?"), constraints ruling out impossible combinations, and named outcomes — plus a
-          <strong>decision flow</strong> over it. A flow is a total function: every scenario reaches exactly one
-          outcome.
+        <p>First we extract <strong>reference legal logic</strong> — boolean predicates ("dismissed for cause?",
+          "5 years served?"), constraints, and named outcomes — plus a
+          <strong>decision flow</strong> over it.
         </p>
-        <p class="fine">Severance: 9 atoms, 7 constraints → 42 legally possible worlds of 512. Claims: 5 atoms → 32
-          worlds.</p>
       </div>
       <div class="step">
-        <div class="k">2 · Clause generation (offline)</div>
-        <p>Contract prose is LLM-authored from the flow. <strong>Faithful</strong> cases render the reference logic
-          exactly. <strong>Divergent</strong> cases first mutate the flow — flip a branch, drop a carve-out, promote a
-          qualifier to a gate — then render the <em>mutated</em> logic faithfully. Divergence lives in the tree, never
-          in a model "making a mistake", so ground truth is exact by construction.</p>
-        <p class="fine">Divergent documents are reworded and renumbered against their faithful siblings: string
-          diffing finds nothing. One flaw per case.</p>
+        <div class="k">2 · Candidate clauses</div>
+        <p><strong>Faithful</strong> clauses are the ones that obey reference logic
+          exactly. <strong>Divergent</strong> clauses mutate the reference flow — flip a branch, drop a carve-out,
+          promote a
+          qualifier to a gate.</p>
       </div>
       <div class="step">
-        <div class="k">3 · Extraction (offline)</div>
-        <p>The prose is read back and mapped onto the <strong>same ontology</strong>, producing an extracted flow —
-          the document's logic as the reader understood it. Because every case has recorded ground truth, extraction
-          accuracy is measured, not assumed.</p>
-        <p class="fine">Current library: 6 of 6 documents extracted semantically exactly.</p>
+        <div class="k">3 · Logic extraction from candidate clauses</div>
+        <p>The prose is mapped onto the <strong>reference logic</strong>, producing an extracted flow —
+          the document's logic as the reader understood it.</p>
       </div>
       <div class="step">
         <div class="k">4 · Certification (Lean)</div>
-        <p>Reference flow vs. extracted flow, over <strong>every valid world</strong>. Lean enumerates the
+        <p>Reference flow vs. extracted flow. Lean enumerates the
           counterexamples and the kernel checks the classification — <code>counterexamples = []</code> or
-          <code>counterexamples.length = N</code> — by <code>decide</code>. No trust in our code required: the proof
-          object is machine-checked.
+          <code>counterexamples.length = N</code> — by <code>decide</code>. The proof object is machine-checked and
+          formally verified.
         </p>
-        <p class="fine">This page re-runs the same exhaustive check live in your browser; the Lean theorem for each
-          case is shown alongside.</p>
       </div>
     </div>
   </section>
 
   <section class="band" id="demo">
-    <h2><span class="no">The workbench</span>Pick a document, then certify it</h2>
+    <h2><span class="no">The interactive workbench</span>Example documents and certification</h2>
     <div class="cases" id="casePicker"></div>
 
     <div class="bench">
@@ -746,6 +310,50 @@
             <div class="fb-h"><span>Extracted flow (from the contract text)</span><span class="src mono"
                 id="extSrc"></span></div>
             <div class="flow-scroll" id="extFlowBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="appendix">
+    <h2><span class="no">Technical Appendix</span>The Lean proof object</h2>
+    <p>Everything above is a rendering of a machine-checked artifact. Below is the artifact itself, the complete
+      Lean&nbsp;4 source that the kernel checks, the transcript that
+      compiling it produces, and the raw exhaustive enumeration.</p>
+    <p id="apxLocked"><em>Run a certification above to unlock the proof artifact for that draft — its file name
+        and theorem statements would spoil the verdict.</em></p>
+    <div id="apxBody" style="display:none">
+      <div class="apx-grid">
+        <div class="panel">
+          <div class="panel-h"><span>Lean 4 proof source — checked by the kernel</span><span class="mono"
+              id="apxLeanPath"></span></div>
+          <div class="panel-b">
+            <p class="fine">One definition per decision node, preserving the shared-subtree (DAG) structure; a
+              <code>valid</code> predicate compiled from the logical flow constraints; the counterexample set defined
+              by enumeration; and the classification theorems discharged by <code>decide</code> — the kernel
+              re-executes the entire enumeration inside the proof checker.
+            </p>
+            <pre class="lean-src"><code id="apxLean"></code></pre>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><span>Compiler transcript</span><span class="mono">lean 4.32.1 · core only ·
+              no mathlib</span></div>
+          <div class="panel-b">
+            <p class="fine">The <code>#eval</code> probe lines as the compiler prints them, reproduced live by
+              this page running the same enumeration; exit code 0 means every theorem was accepted by the
+              kernel.</p>
+            <pre class="term" id="apxTerm"></pre>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><span>Exhaustive enumeration</span><span class="mono" id="apxWtMeta"></span></div>
+          <div class="panel-b">
+            <p class="fine">Every constraint-satisfying assignment of the atoms, in Lean's enumeration order
+              (first atom most significant). <code>1</code>&nbsp;=&nbsp;true, <code>·</code>&nbsp;=&nbsp;false;
+              rows where the drafted contract disagrees with the agreed policy are flagged.</p>
+            <div class="wt-scroll" id="apxWt"></div>
           </div>
         </div>
       </div>
@@ -999,12 +607,87 @@
     highlight(extSvg, ep, agree ? "a" : "b");
   }
 
+  /* ---------- appendix: the proof object ---------- */
+  function leanHighlight(src) {
+    const re = /(\/-[\s\S]*?-\/|--[^\n]*)|(s!"(?:[^"\\]|\\.)*"|"(?:[^"\\]|\\.)*")|(#eval\b|\b(?:set_option|structure|inductive|deriving|def|theorem|where|if|then|else|by|decide|fun|let)\b)/g;
+    const out = [];
+    let last = 0, m;
+    while ((m = re.exec(src))) {
+      out.push(esc(src.slice(last, m.index)));
+      const cls = m[1] ? "lc" : m[2] ? "ls" : "lk";
+      out.push(`<span class="${cls}">${esc(m[0])}</span>`);
+      last = m.index + m[0].length;
+    }
+    out.push(esc(src.slice(last)));
+    return out.join("");
+  }
+  // Lean's allAssignments nests flatMap with the first atom outermost, so the
+  // first atom is the most significant bit of the enumeration counter.
+  function leanOrderWorlds(cs) {
+    const ids = cs.ontology.atoms.map(a => a.id), n = ids.length, rows = [];
+    for (let m = 0; m < (1 << n); m++) {
+      const a = {};
+      ids.forEach((id, i) => a[id] = !!(m & (1 << (n - 1 - i))));
+      if (isValid(cs.ontology.constraints, a).length) continue;
+      const ref = evaluate(cs.refFlow, a).outcome, ext = evaluate(cs.extFlow, a).outcome;
+      rows.push({ a, ref, ext, diverge: ref !== ext });
+    }
+    return rows;
+  }
+  // matches Lean's derived Repr: single line if it fits the pretty-printer's
+  // 120-column width, otherwise one field per line with 2-space continuation
+  function reprAssignment(a, ids) {
+    const fields = ids.map(id => `${id} := ${a[id]}`);
+    const oneline = "{ " + fields.join(", ") + " }";
+    if (oneline.length <= 120) return oneline;
+    return "{ " + fields.join(",\n  ") + " }";
+  }
+  function renderAppendix() {
+    $("#apxLocked").style.display = "none";
+    $("#apxBody").style.display = "";
+    $("#apxLeanPath").textContent = current.leanPath;
+    $("#apxLean").innerHTML = leanHighlight(current.leanFull);
+
+    const ids = current.ontology.atoms.map(a => a.id);
+    const rows = leanOrderWorlds(current);
+    const cxs = rows.filter(r => r.diverge);
+    const term = $("#apxTerm");
+    term.replaceChildren(
+      h("span", { class: "cmd" }, `$ lean ${current.leanPath}\n`),
+      `TOTAL ${1 << ids.length}\nVALID ${rows.length}\nCOUNTEREXAMPLES ${cxs.length}\n`,
+      ...cxs.map(r => `CX ${reprAssignment(r.a, ids)}\n`),
+      h("span", { class: "cmd" }, "$ echo $?\n"),
+      "0  ", h("span", { class: "cmt" }, "# every theorem accepted by the kernel\n"),
+    );
+
+    $("#apxWtMeta").textContent =
+      `${1 << ids.length} raw · ${rows.length} valid · ${cxs.length} diverging`;
+    const head = h("tr", {}, h("th", {}, "#"));
+    for (const id of ids) head.append(h("th", { class: "rot", title: id },
+      h("span", {}, DATA.shortLabels[id].replace(/\?$/, ""))));
+    head.append(h("th", {}, "reference"), h("th", {}, "extracted"), h("th", {}, "δ"));
+    const body = h("tbody");
+    rows.forEach((r, i) => {
+      const tr = h("tr", { class: r.diverge ? "dv" : "" }, h("td", {}, String(i + 1)));
+      for (const id of ids) tr.append(h("td", {}, r.a[id] ? "1" : "·"));
+      tr.append(
+        h("td", { class: "oc-cell" }, r.ref),
+        h("td", { class: "oc-cell" }, r.ext),
+        h("td", {}, r.diverge ? "≠" : ""),
+      );
+      body.append(tr);
+    });
+    $("#apxWt").replaceChildren(h("table", { class: "wt" }, h("thead", {}, head), body));
+  }
+
   function hideVerdict() {
     $("#verdictBanner").className = "banner";
     $("#cxPanel").style.display = "none";
     $("#leanPanel").style.display = "none";
     $("#leanBadge").style.display = "none";
     $("#certifyBtn").disabled = false;
+    $("#apxLocked").style.display = "";
+    $("#apxBody").style.display = "none";
   }
   function showVerdict(res, instant) {
     const eq = res.cxs.length === 0;
@@ -1019,6 +702,7 @@
     $("#leanCode").textContent = current.lean;
     $("#docPath").textContent = current.document;
     $("#extSrc").textContent = "extracted/" + current.id + ".json";
+    renderAppendix();
 
     const card = document.querySelector(`.case-card[data-cid="${current.id}"] .chip.status`);
     card.className = "chip status " + (eq ? "eq" : "div");
