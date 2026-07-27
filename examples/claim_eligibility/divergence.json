@@ -4,7 +4,8 @@
   "planted_flaw": {
     "clause": "4.3",
     "kind": "penalty_escalated_to_denial",
-    "summary": "Late notification is drafted as a ground for full denial of the claim; the reference flow only applies a 15% reduced-payment adjustment for late notice."
+    "summary": "Late notification is drafted as a ground for full denial of the claim; the reference flow only applies a 15% reduced-payment adjustment for late notice.",
+    "quotes": ["Any claim not notified within such period shall be denied and no amount shall be payable in respect of it."]
   },
   "expected_extracted_flow": {
     "entry": "n1",

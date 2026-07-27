@@ -101,10 +101,18 @@ def main():
         gt = None
         if case["ground_truth"]:
             g = load(case["ground_truth"])
+            quotes = g["planted_flaw"].get("quotes", [])
+            # every quote must occur verbatim (modulo whitespace) in the page text,
+            # or the highlight would silently fail to render
+            page_text = doc_text(case["document"])
+            for q in quotes:
+                rx = r"\s+".join(re.escape(w) for w in q.split())
+                assert re.search(rx, page_text), f"{cid}: flaw quote not found in document: {q[:60]}…"
             gt = {
                 "clause": g["planted_flaw"]["clause"],
                 "kind": g["planted_flaw"]["kind"],
                 "summary": g["planted_flaw"]["summary"],
+                "quotes": quotes,
                 "narrative": g["canonical_counterexample"]["narrative"],
                 "reference_outcome": g["canonical_counterexample"]["reference_outcome"],
                 "document_outcome": g["canonical_counterexample"]["document_outcome"],

@@ -4,7 +4,8 @@
   "planted_flaw": {
     "clause": "7.6",
     "kind": "branch_polarity_flip",
-    "summary": "The notice condition is drafted the wrong way round: the reference flow pays enhanced severance unconditionally when the employer FAILED to give written notice and applies the five-year tenure test when notice was given; the drafted clause does the opposite."
+    "summary": "The notice condition is drafted the wrong way round: the reference flow pays enhanced severance unconditionally when the employer FAILED to give written notice and applies the five-year tenure test when notice was given; the drafted clause does the opposite.",
+    "quotes": ["where the Employer has given notice of termination in writing: the Enhanced Severance Payment, irrespective of length of service", "where the Employer has failed to give notice of termination in writing: the Enhanced Severance Payment if the Employee has completed five (5) years of continuous service, and otherwise the Standard Severance Payment"]
   },
   "expected_extracted_flow": {
     "entry": "n1",

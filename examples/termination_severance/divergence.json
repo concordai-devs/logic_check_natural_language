@@ -4,7 +4,8 @@
   "planted_flaw": {
     "clause": "7.2",
     "kind": "condition_promoted_to_gate",
-    "summary": "Twelve months of continuous service is drafted as a precondition for ANY severance, silently removing the statutory-minimum floor the reference flow guarantees employees with under twelve months of service on a no-fault termination."
+    "summary": "Twelve months of continuous service is drafted as a precondition for ANY severance, silently removing the statutory-minimum floor the reference flow guarantees employees with under twelve months of service on a no-fault termination.",
+    "quotes": ["The Employee shall not be entitled to any severance payment unless, as at the Termination Date, the Employee has completed twelve (12) months of continuous service with the Employer."]
   },
   "expected_extracted_flow": {
     "entry": "n0",

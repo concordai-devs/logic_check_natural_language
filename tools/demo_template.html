@@ -310,6 +310,13 @@
     padding: 0.4rem 0.6rem;
   }
 
+  .doc mark.flaw-mark {
+    background: #f2cfcf;
+    color: inherit;
+    padding: 0.05em 0.15em;
+    box-shadow: inset 0 -2px 0 var(--diverge);
+  }
+
   .flaw-note {
     font-size: 0.85rem;
     color: var(--diverge);
@@ -539,71 +546,6 @@
     margin-bottom: 0.2rem;
   }
 
-  .cx-list {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    margin-top: 0.7rem;
-  }
-
-  .cx-chip {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.78rem;
-    background: var(--code-bg);
-    border: 1px solid var(--box);
-    padding: 0.2rem 0.5rem;
-    cursor: pointer;
-    color: var(--ink);
-  }
-
-  .cx-chip:hover {
-    border-color: var(--diverge);
-  }
-
-  /* explorer */
-  .toggles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .tg {
-    font: inherit;
-    font-size: 0.85rem;
-    border: 1px solid var(--box);
-    background: var(--surface);
-    color: var(--ink);
-    padding: 0.15rem 0.6rem;
-    cursor: pointer;
-  }
-
-  .tg.on {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-  }
-
-  .validity {
-    font-size: 0.85rem;
-    margin-bottom: 0.7rem;
-  }
-
-  .validity.ok {
-    color: var(--accent);
-  }
-
-  .validity.bad {
-    color: var(--mid);
-  }
-
-  .outcomes {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    align-items: stretch;
-  }
-
   /* ---- appendix: the proof object ---- */
   .apx-grid {
     display: grid;
@@ -635,24 +577,6 @@
 
   .lean-src .ls {
     color: var(--diverge);
-  }
-
-  pre.term {
-    background: #000000;
-    color: #d8d8d8;
-    border: 1px solid var(--box);
-    margin: 0;
-    max-height: 420px;
-    overflow: auto;
-  }
-
-  .term .cmd {
-    color: #ffffff;
-    font-weight: bold;
-  }
-
-  .term .cmt {
-    color: #888888;
   }
 
   .wt-scroll {
@@ -767,7 +691,7 @@
     <div class="eyebrow">Concord AI · Interactive Demo </div>
     <h1>Formal certification of a legal clause</h1>
     <p class="standfirst">Below are six synthetic contract sections generated from two agreed decision
-      policies — some faithful, some carrying a single planted drafting flaw. The demo inspects the logic
+      policies — some faithful, some carrying a single flaw. The demo inspects the logic
       and runs the certification: every legally possible scenario is checked, and any divergence is returned
       as a concrete case where the contract and the policy disagree.</p>
   </header>
@@ -837,27 +761,9 @@
                 <div class="ref"><b>Agreed policy</b><span id="cxRef"></span></div>
                 <div class="docx"><b>Drafted contract</b><span id="cxDoc"></span></div>
               </div>
-              <div class="cx-list" id="cxList"></div>
-              <p style="font-family:system-ui,sans-serif;font-size:0.72rem;color:var(--muted);margin:0.5rem 0 0">
-                Click a scenario to load it into the explorer and trace both paths below.</p>
             </div>
             <div id="leanPanel" style="display:none">
               <pre><code id="leanCode"></code></pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-h"><span>Scenario explorer</span><span
-              style="font-weight:400;letter-spacing:0;text-transform:none">toggle the facts of a case</span></div>
-          <div class="panel-b">
-            <div class="toggles" id="toggles"></div>
-            <div class="validity" id="validity"></div>
-            <div class="outcomes">
-              <div class="vs" style="flex:1">
-                <div class="ref"><b>Agreed policy says</b><span id="outRef">—</span></div>
-                <div class="docx" id="outDocBox"><b>Drafted contract says</b><span id="outDoc">—</span></div>
-              </div>
             </div>
           </div>
         </div>
@@ -880,8 +786,7 @@
   <section class="band" id="appendix">
     <h2><span class="no">Technical Appendix</span>The Lean proof object</h2>
     <p>Everything above is a rendering of a machine-checked artifact. Below is the artifact itself, the complete
-      Lean&nbsp;4 source that the kernel checks, the transcript that
-      compiling it produces, and the raw exhaustive enumeration.</p>
+      Lean&nbsp;4 source that the kernel checks, and the raw exhaustive enumeration.</p>
     <p id="apxLocked"><em>Run a certification above to unlock the proof artifact for that draft — its file name
         and theorem statements would spoil the verdict.</em></p>
     <div id="apxBody" style="display:none">
@@ -896,16 +801,6 @@
               re-executes the entire enumeration inside the proof checker.
             </p>
             <pre class="lean-src"><code id="apxLean"></code></pre>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><span>Compiler transcript</span><span class="mono">lean 4.32.1 · core only ·
-              no mathlib</span></div>
-          <div class="panel-b">
-            <p class="fine">The <code>#eval</code> probe lines as the compiler prints them, reproduced live by
-              this page running the same enumeration; exit code 0 means every theorem was accepted by the
-              kernel.</p>
-            <pre class="term" id="apxTerm"></pre>
           </div>
         </div>
         <div class="panel">
@@ -924,7 +819,7 @@
   <footer>
     <div class="prose">
       <strong>Scope of the guarantee.</strong> The certification proves that two logic flows — the agreed
-      reference and the flow extracted from the prose — agree or disagree on every legally possible scenario.
+      reference and the flow extracted from the prose — agree or disagree on every scenario within logic scope.
       It does not prove that extraction read the document correctly; that step is measured against ground truth
       (currently 6/6 exact) and stays auditable by a human. Open-textured terms ("material breach",
       "suitable alternative") live inside the predicates, where interpretation remains a human judgment.
@@ -1103,10 +998,39 @@
   function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function inline(s) { return s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>"); }
 
+  // wrap the given plain-text quotes in <mark class="flaw-mark"> wherever they
+  // occur in the rendered document (whitespace-insensitive, may span <strong>)
+  function markQuotes(quotes) {
+    const paras = document.querySelectorAll("#docView p");
+    for (const q of quotes) {
+      const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"));
+      for (const p of paras) {
+        const m = rx.exec(p.textContent);
+        if (!m) continue;
+        const range = textRange(p, m.index, m.index + m[0].length);
+        const mark = h("mark", { class: "flaw-mark" });
+        mark.append(range.extractContents());
+        range.insertNode(mark);
+        break;
+      }
+    }
+  }
+  function textRange(root, start, end) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const range = document.createRange();
+    let pos = 0, node;
+    while ((node = walker.nextNode())) {
+      const next = pos + node.data.length;
+      if (start >= pos && start <= next) range.setStart(node, start - pos);
+      if (end >= pos && end <= next) { range.setEnd(node, end - pos); break; }
+      pos = next;
+    }
+    return range;
+  }
+
   /* ---------- app state ---------- */
   let current = null;
   const results = {};   // case id -> {valid, cxs}
-  let scenario = {};    // atom id -> bool
   let refSvg = null, extSvg = null;
 
   function selectCase(cid) {
@@ -1129,43 +1053,9 @@
     refSvg = renderFlow($("#refFlowBox"), current.refFlow, DATA.shortLabels, DATA.outcomes);
     extSvg = renderFlow($("#extFlowBox"), current.extFlow, DATA.shortLabels, DATA.outcomes);
 
-    scenario = {};
-    current.ontology.atoms.forEach(a => scenario[a.id] = false);
-    renderToggles();
-    updateScenario();
-
     const res = results[cid];
     $("#progress").textContent = "";
     if (res) showVerdict(res, true); else hideVerdict();
-  }
-
-  function renderToggles() {
-    const box = $("#toggles");
-    box.replaceChildren(...current.ontology.atoms.map(a =>
-      h("button", {
-        class: "tg" + (scenario[a.id] ? " on" : ""), title: a.question, "data-atom": a.id,
-        onclick: () => { scenario[a.id] = !scenario[a.id]; renderToggles(); updateScenario(); },
-      }, DATA.shortLabels[a.id].replace(/\?$/, ""))
-    ));
-  }
-  function updateScenario() {
-    const viol = isValid(current.ontology.constraints, scenario);
-    const v = $("#validity");
-    if (viol.length) {
-      v.className = "validity bad";
-      v.textContent = "⚠ Not a legally possible scenario: " + viol.join("; ") + ". (Shown anyway — certification skips such worlds.)";
-    } else {
-      v.className = "validity ok";
-      v.textContent = "✓ Legally possible scenario (satisfies all ontology constraints)";
-    }
-    const rp = evaluate(current.refFlow, scenario);
-    const ep = evaluate(current.extFlow, scenario);
-    $("#outRef").textContent = DATA.outcomes[rp.outcome].label;
-    $("#outDoc").textContent = DATA.outcomes[ep.outcome].label;
-    const agree = rp.outcome === ep.outcome;
-    $("#outDocBox").className = agree ? "ref" : "docx";
-    highlight(refSvg, rp, "a");
-    highlight(extSvg, ep, agree ? "a" : "b");
   }
 
   /* ---------- appendix: the proof object ---------- */
@@ -1195,14 +1085,6 @@
     }
     return rows;
   }
-  // matches Lean's derived Repr: single line if it fits the pretty-printer's
-  // 120-column width, otherwise one field per line with 2-space continuation
-  function reprAssignment(a, ids) {
-    const fields = ids.map(id => `${id} := ${a[id]}`);
-    const oneline = "{ " + fields.join(", ") + " }";
-    if (oneline.length <= 120) return oneline;
-    return "{ " + fields.join(",\n  ") + " }";
-  }
   function renderAppendix() {
     $("#apxLocked").style.display = "none";
     $("#apxBody").style.display = "";
@@ -1212,15 +1094,6 @@
     const ids = current.ontology.atoms.map(a => a.id);
     const rows = leanOrderWorlds(current);
     const cxs = rows.filter(r => r.diverge);
-    const term = $("#apxTerm");
-    term.replaceChildren(
-      h("span", { class: "cmd" }, `$ lean ${current.leanPath}\n`),
-      `TOTAL ${1 << ids.length}\nVALID ${rows.length}\nCOUNTEREXAMPLES ${cxs.length}\n`,
-      ...cxs.map(r => `CX ${reprAssignment(r.a, ids)}\n`),
-      h("span", { class: "cmd" }, "$ echo $?\n"),
-      "0  ", h("span", { class: "cmt" }, "# every theorem accepted by the kernel\n"),
-    );
-
     $("#apxWtMeta").textContent =
       `${1 << ids.length} raw · ${rows.length} valid · ${cxs.length} diverging`;
     const head = h("tr", {}, h("th", {}, "#"));
@@ -1254,10 +1127,10 @@
     const eq = res.cxs.length === 0;
     const b = $("#verdictBanner");
     b.className = "banner show " + (eq ? "eq" : "div");
-    $("#verdictBig").textContent = eq ? "✓ CERTIFIED EQUIVALENT" : "✗ DIVERGENT FROM AGREED POLICY";
+    $("#verdictBig").textContent = eq ? "✓ EQUIVALENT" : "✗ DIVERGENT";
     $("#verdictSub").textContent = eq
-      ? `All ${res.valid} legally possible scenarios produce the same outcome under the contract as under the agreed policy.`
-      : `${res.cxs.length} of ${res.valid} legally possible scenarios produce a different outcome under the contract than under the agreed policy.`;
+      ? `All legally possible scenarios produce the same outcome under the contract as under the agreed policy.`
+      : `${res.cxs.length} legally possible scenarios produce a different outcome under the contract than under the agreed policy.`;
     $("#leanBadge").style.display = "";
     $("#leanPanel").style.display = "";
     $("#leanCode").textContent = current.lean;
@@ -1275,21 +1148,16 @@
       $("#cxNarr").textContent = "“" + gt.narrative + "”";
       $("#cxRef").textContent = DATA.outcomes[gt.reference_outcome].label;
       $("#cxDoc").textContent = DATA.outcomes[gt.document_outcome].label;
-      $("#cxList").replaceChildren(...res.cxs.map((cx, i) =>
-        h("button", {
-          class: "cx-chip",
-          onclick: () => { scenario = { ...cx }; renderToggles(); updateScenario(); $("#toggles").scrollIntoView({ behavior: "smooth", block: "center" }); },
-        }, "scenario " + (i + 1))
-      ));
-      // highlight flawed clause + note
+      // trace the canonical counterexample through both flow diagrams
+      highlight(refSvg, evaluate(current.refFlow, gt.assignment), "a");
+      highlight(extSvg, evaluate(current.extFlow, gt.assignment), "b");
+      // highlight flawed clause + the offending language + note
       const p = $(`#docView p[data-clause="${gt.clause}"]`);
       if (p) p.classList.add("flawed");
+      markQuotes(gt.quotes || []);
       $("#flawNote").replaceChildren(h("div", { class: "flaw-note" },
-        `Planted flaw (clause ${gt.clause}, ${gt.kind.replace(/_/g, " ")}): ${gt.summary}`));
-      if (!instant) {
-        scenario = { ...gt.assignment }; renderToggles(); updateScenario();
-        if (p) p.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
+        `Flaw (clause ${gt.clause}, ${gt.kind.replace(/_/g, " ")}): ${gt.summary}`));
+      if (!instant && p) p.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } else {
       $("#cxPanel").style.display = "none";
     }
@@ -1307,10 +1175,10 @@
       const f = dur ? Math.min(1, (now - t0) / dur) : 1;
       const k = Math.round(f * res.total);
       const v = Math.round(f * res.valid);
-      $("#progress").textContent = `checking world ${k} / ${res.total} · ${v} legally possible…`;
+      $("#progress").textContent = `checking...`;
       if (f < 1) requestAnimationFrame(tick);
       else {
-        $("#progress").textContent = `${res.total} worlds checked · ${res.valid} legally possible · done`;
+        $("#progress").textContent = `done`;
         results[current.id] = res;
         showVerdict(res, false);
       }

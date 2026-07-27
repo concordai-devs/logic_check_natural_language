@@ -4,7 +4,8 @@
   "planted_flaw": {
     "clause": "7.3",
     "kind": "node_splice",
-    "summary": "The constructive-dismissal carve-out is missing: the reference flow treats a resignation in response to the employer's fundamental breach as a termination by the employer, with severance payable under the ordinary provisions; the drafted clause treats every resignation alike and pays nothing."
+    "summary": "The constructive-dismissal carve-out is missing: the reference flow treats a resignation in response to the employer's fundamental breach as a termination by the employer, with severance payable under the ordinary provisions; the drafted clause treats every resignation alike and pays nothing.",
+    "quotes": ["No severance payment shall be due where the employment ends by reason of the Employee's resignation."]
   },
   "expected_extracted_flow": {
     "entry": "n1",
